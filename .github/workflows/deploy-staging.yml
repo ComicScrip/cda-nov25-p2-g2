@@ -1,0 +1,28 @@
+name: Compile and push client and server to staging environment
+
+on:
+  push:
+    branches: ["dev"]
+  workflow_dispatch:
+
+jobs:
+  client-tests:
+    uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/test-frontend.yml@dev
+
+  build-and-push-server:
+    uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/build-backend.yml@dev
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      image_name: scrip/cda-nov25-p2-g2-back:staging
+
+  build-and-push-client:
+    needs:
+      - client-tests
+    uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/build-frontend.yml@dev
+    secrets:
+      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+    with:
+      image_name: scrip/cda-nov25-p2-g2-front:staging
