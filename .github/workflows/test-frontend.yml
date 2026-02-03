@@ -17,6 +17,6 @@ jobs:
         with:
           node-version: 20
       - name: Install Dependencies
-        run: npm ci
+        run: npm i
       - name: Run Jest Tests
         run: npm run test
