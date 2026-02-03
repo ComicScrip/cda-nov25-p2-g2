@@ -7,11 +7,13 @@ COPY package*.json ./
 
 RUN npm i
 
+
 COPY src ./src
 COPY public ./public
 COPY next.config.ts ./
 COPY postcss.config.mjs ./
 COPY tsconfig.json ./
+
 
 RUN npm run build
 
