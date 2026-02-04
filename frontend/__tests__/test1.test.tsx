@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import Header from "@/components/Header";
 
 // Mock next/router
+
 jest.mock("next/router", () => ({
   useRouter: () => ({
     push: jest.fn(),
