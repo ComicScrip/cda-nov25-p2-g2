@@ -1,4 +1,3 @@
-@!/bin/bash
 
 export DEPLOY_ENV=${DEPLOY_ENV:-staging}
 
