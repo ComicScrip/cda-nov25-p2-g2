@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-
+import { Child } from "./Child";
 
 @ObjectType()
 @Entity()
