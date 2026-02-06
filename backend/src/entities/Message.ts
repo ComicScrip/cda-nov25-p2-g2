@@ -1,0 +1,35 @@
+import { Field, Int, ObjectType } from "type-graphql";
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
+import { User } from "./User";
+import { Conversation } from "./Conversation";
+
+@ObjectType()
+@Entity()
+export class Message extends BaseEntity {
+  @Field(() => Int)
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Field()
+  @Column("text")
+  content: string;
+
+  @Field()
+  @CreateDateColumn()
+  date: Date;
+
+  @Field(() => User)
+  @ManyToOne(() => User, { eager: true })
+  author: User;
+
+  @Field(() => Conversation)
+  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  conversation: Conversation;
+}
