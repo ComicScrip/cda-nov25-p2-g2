@@ -19,6 +19,7 @@ export class PlanningResolver {
       relations: ["group"] 
     });
   }
+  
 
   //  CREATE 
   @Mutation(() => Planning)
