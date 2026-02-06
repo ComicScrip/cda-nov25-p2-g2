@@ -1,6 +1,8 @@
 import { DataSource } from "typeorm";
 import { Child } from "../entities/Child";
+import { Conversation } from "../entities/Conversation";
 import { Group } from "../entities/Group";
+import { Message } from "../entities/Message";
 import { Planning } from "../entities/Planning";
 import { Report } from "../entities/Report";
 import { User } from "../entities/User";
@@ -13,7 +15,7 @@ export default new DataSource({
   password: env.DB_PASS,
   port: env.DB_PORT,
   database: env.DB_NAME,
-  entities: [User, Report, Group, Planning, Child],
+  entities: [User, Report, Group, Planning, Child, Message, Conversation],
   synchronize: env.NODE_ENV !== "production",
-//logging: true
-})
+  //logging: true
+});
