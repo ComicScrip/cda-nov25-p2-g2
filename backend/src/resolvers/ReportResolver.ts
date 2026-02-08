@@ -1,5 +1,12 @@
 import { GraphQLError } from "graphql/error";
-import { Arg, GraphQLISODateTime, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  GraphQLISODateTime,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { Child } from "../entities/Child";
 import { Report } from "../entities/Report";
 
@@ -11,7 +18,8 @@ export default class ReportResolver {
     return Report.find({
       relations: [
         "child",
-        "child.representatives", // parents ou admin ou assistante mat
+        "child.parents", // ✅ Corrigé : "parents" au lieu de "representatives"
+        "child.group", // ✅ Ajouté : pour accéder à child.group.group_name
       ],
       order: { date: "DESC" },
     });
@@ -19,17 +27,21 @@ export default class ReportResolver {
 
   // afficher un seul
   @Query(() => Report, { nullable: true })
-  async report(@Arg("id") id: number) {
+  async report(@Arg("id", () => Int) id: number) {
     return Report.findOne({
       where: { id },
-      relations: ["child", "child.representatives"],
+      relations: [
+        "child",
+        "child.parents", // ✅ Corrigé
+        "child.group", // ✅ Ajouté
+      ],
     });
   }
 
-  //   creer un report
+  // créer un report
   @Mutation(() => Report)
   async createReport(
-    @Arg("childId") childId: number,
+    @Arg("childId", () => Int) childId: number,
     @Arg("isPresent") isPresent: boolean,
     @Arg("date", () => GraphQLISODateTime) date: Date,
     @Arg("staff_comment", { nullable: true }) staff_comment?: string,
@@ -38,11 +50,11 @@ export default class ReportResolver {
   ): Promise<Report> {
     const child = await Child.findOne({
       where: { id: childId },
-      relations: ["child", "child.represent"],
+      // ✅ Pas besoin de relations ici, on a juste besoin de vérifier que l'enfant existe
     });
 
     if (!child) {
-      throw new GraphQLError("child not found", {
+      throw new GraphQLError("Child not found", {
         extensions: { code: "NOT_FOUND", http: { status: 404 } },
       });
     }
@@ -50,7 +62,7 @@ export default class ReportResolver {
     const report = await Report.create({
       child,
       isPresent,
-      date: new Date(Date.now()),
+      date, // ✅ Utilise la date passée en paramètre, pas Date.now()
       staff_comment,
       baby_mood,
       picture,

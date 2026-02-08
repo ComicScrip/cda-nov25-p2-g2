@@ -1,6 +1,14 @@
 import { hash, verify } from "argon2";
 import { GraphQLError } from "graphql";
-import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { endSession, getCurrentUser, startSession } from "../auth";
 import {
   ChangePasswordInput,
@@ -8,6 +16,7 @@ import {
   LoginInput,
   UpdateUserInput,
   User,
+  UserRole,
 } from "../entities/User";
 import type { GraphQLContext } from "../types";
 
@@ -20,14 +29,17 @@ export default class UserResolver {
   @Authorized("admin")
   @Query(() => [User])
   async users() {
-    return await User.find();
+    return await User.find({
+      relations: ["children"], // Charge la relation avec les enfants
+    });
   }
 
   // Créer un compte (parent / staff) avec mot de passe temporaire
   @Authorized("admin")
   @Mutation(() => User)
   async createUser(
-    @Arg("data", () => CreateUserInput, { validate: true }) data: CreateUserInput,
+    @Arg("data", () => CreateUserInput, { validate: true })
+    data: CreateUserInput,
   ) {
     const email = normalizeEmail(data.email);
     const existingUser = await User.findOne({ where: { email } });
@@ -36,6 +48,27 @@ export default class UserResolver {
         extensions: { code: "EMAIL_ALREADY_TAKEN", http: { status: 400 } },
       });
     }
+
+    // ✅ VALIDATION : Un staff DOIT avoir un group_id
+    if (data.role === UserRole.Staff && !data.group_id) {
+      throw new GraphQLError(
+        "Un membre du personnel doit être rattaché à un groupe",
+        {
+          extensions: { code: "MISSING_GROUP_ID", http: { status: 400 } },
+        },
+      );
+    }
+
+    // ✅ VALIDATION : Un parent NE DOIT PAS avoir de group_id (il hérite des groupes de ses enfants)
+    if (data.role === UserRole.Parent && data.group_id) {
+      throw new GraphQLError(
+        "Un parent ne peut pas être rattaché directement à un groupe. Le(s) groupe(s) sont déterminés par ses enfants.",
+        {
+          extensions: { code: "INVALID_GROUP_ID", http: { status: 400 } },
+        },
+      );
+    }
+
     const hashedPassword = await hash(data.password);
 
     const newUser = User.create({
@@ -45,7 +78,7 @@ export default class UserResolver {
       phone: data.phone,
       hashedPassword,
       role: data.role,
-      group_id: data.group_id,
+      group_id: data.group_id || null, // ✅ Utiliser null si non fourni
     });
 
     return await newUser.save();
@@ -55,13 +88,34 @@ export default class UserResolver {
   @Authorized("admin")
   @Mutation(() => User)
   async updateUser(
-    @Arg("data", () => UpdateUserInput, { validate: true }) data: UpdateUserInput,
+    @Arg("data", () => UpdateUserInput, { validate: true })
+    data: UpdateUserInput,
   ) {
     const user = await User.findOne({ where: { id: data.id } });
     if (!user) {
       throw new GraphQLError("User not found", {
         extensions: { code: "USER_NOT_FOUND", http: { status: 404 } },
       });
+    }
+
+    // VALIDATION : Si on change le rôle vers Staff, vérifier qu'il y a un group_id
+    if (data.role === UserRole.Staff && !data.group_id && !user.group_id) {
+      throw new GraphQLError(
+        "Un membre du personnel doit être rattaché à un groupe",
+        {
+          extensions: { code: "MISSING_GROUP_ID", http: { status: 400 } },
+        },
+      );
+    }
+
+    // VALIDATION : Si on change le rôle vers Parent, retirer le group_id
+    if (data.role === UserRole.Parent && data.group_id) {
+      throw new GraphQLError(
+        "Un parent ne peut pas être rattaché directement à un groupe",
+        {
+          extensions: { code: "INVALID_GROUP_ID", http: { status: 400 } },
+        },
+      );
     }
 
     if (data.email !== undefined) user.email = normalizeEmail(data.email);

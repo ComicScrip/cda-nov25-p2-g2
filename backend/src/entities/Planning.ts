@@ -1,10 +1,10 @@
 import { Field, ID, ObjectType } from "type-graphql";
-import { 
-    BaseEntity, 
-    Column, 
-    Entity, 
-    ManyToOne, 
-    PrimaryGeneratedColumn 
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToOne,
+  PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { Group } from "./Group";
@@ -41,14 +41,14 @@ export class Planning extends BaseEntity {
   snack: string;
 
   @Field()
-  @Column({ type: "datetime" })
+  @Column()
   date: Date;
 
   @Field(() => Group)
   @ManyToOne(
     () => Group,
-    (group) => group.planning,
-    { onDelete: "CASCADE" }
+    (group) => group.plannings,
+    { onDelete: "CASCADE" },
   )
   group: Group;
 }

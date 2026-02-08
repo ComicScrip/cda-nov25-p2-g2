@@ -6,7 +6,7 @@
     "dev": "ts-node-dev src/index.ts",
     "build": "tsc",
     "start": "node build/index.js",
-    "resetDB": "ts-node src/db/reset.ts",
+    "resetDB": "ts-node src/db/resetDB.ts",
     "lint": "biome check",
     "format": "biome format --write && biome check --write"
   },

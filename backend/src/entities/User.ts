@@ -5,8 +5,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Child } from "./Child";
 
 export const UserRole = {
   Admin: "admin",
@@ -39,7 +42,7 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", length: 50 })
   phone: string;
 
-  @Column({ name :"password", type: "text" })
+  @Column({ name: "password", type: "text" })
   hashedPassword: string;
 
   @Field()
@@ -54,12 +57,27 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", length: 50, default: UserRole.Parent })
   role: Role;
 
-  @Field(() => Int)
-  @Column({ type: "int", name: "group_id" })
-  group_id: number;
+  // group_id devient nullable pour permettre aux parents d'avoir plusieurs enfants dans différents groupes
+  // Les staff ont un group_id obligatoire, les parents héritent des groupes de leurs enfants
+  @Field(() => Int, { nullable: true })
+  @Column({ type: "int", name: "group_id", nullable: true })
+  group_id: number | null;
+
+  // Relation ManyToMany inverse : un User (parent) peut avoir plusieurs enfants
+  @Field(() => [Child], { nullable: true })
+  @ManyToMany(
+    () => Child,
+    (child) => child.parents,
+  )
+  @JoinTable({
+    name: "user_children",
+    joinColumn: { name: "user_id", referencedColumnName: "id" },
+    inverseJoinColumn: { name: "child_id", referencedColumnName: "id" },
+  })
+  children: Child[];
 }
 
- // Admin crée les comptes avec mdp temporaire
+// Admin crée les comptes avec mdp temporaire
 @InputType()
 export class CreateUserInput {
   @Field()
@@ -67,7 +85,9 @@ export class CreateUserInput {
   email: string;
 
   @Field()
-  @Length(2, 50, { message: "Le prénom doit contenir entre 2 et 50 caractères" })
+  @Length(2, 50, {
+    message: "Le prénom doit contenir entre 2 et 50 caractères",
+  })
   first_name: string;
 
   @Field()
@@ -90,10 +110,11 @@ export class CreateUserInput {
   @Field()
   role: Role; // parent / staff
 
-  @Field(() => Int)
-  group_id!: number;
+  // ✅ group_id devient optionnel dans les inputs
+  @Field(() => Int, { nullable: true })
+  group_id?: number;
 }
- // Tout le monde peut se connecter et changer son mdp
+// Tout le monde peut se connecter et changer son mdp
 @InputType()
 export class LoginInput {
   @Field()
@@ -110,7 +131,7 @@ export class LoginInput {
   )
   password: string;
 }
- // L'utilisateur peut changer son mot passe ensuite
+// L'utilisateur peut changer son mot passe ensuite
 @InputType()
 export class ChangePasswordInput {
   @Field()
@@ -126,7 +147,7 @@ export class ChangePasswordInput {
   )
   newPassword!: string;
 }
-// Mise à jour des informations de l'utilisateur, les champs tous nullable saud id car sinon on oblige l'admin à tout resaisir pour faire une modification
+// Mise à jour des informations de l'utilisateur, les champs tous nullable sauf id car sinon on oblige l'admin à tout resaisir pour faire une modification
 @InputType()
 export class UpdateUserInput {
   @Field(() => Int)
