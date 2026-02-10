@@ -1,10 +1,18 @@
+import { IsISO8601, IsUrl, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./User";
-import { Report } from "./Report";
-import { Group } from "./Group";
-import {  IsISO8601, IsUrl, Length } from "class-validator";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { ObjectId } from "../types";
+import { Group } from "./Group";
+import { Report } from "./Report";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -25,80 +33,92 @@ export class Child extends BaseEntity {
   BirthDate: Date;
 
   @Field()
-  @Column({type: "text"})
-  picture: string
+  @Column({ type: "text" })
+  picture: string;
 
   @Field()
-  @Column({type: "text", nullable: true})
-  healthRecord: string
+  @Column({ type: "text", nullable: true })
+  healthRecord: string;
 
-  // Child relations 
+  // Child relations
   @Field(() => Group)
-  @ManyToOne(() => Group, group => group.children)
+  @ManyToOne(
+    () => Group,
+    (group) => group.children,
+  )
   group: Group;
 
   @Field(() => [Report])
-  @OneToMany(() => Report, report => report.child)
-  reports: Report[]
+  @OneToMany(
+    () => Report,
+    (report) => report.child,
+  )
+  reports: Report[];
 
   @Field(() => [User])
-  @ManyToMany(() => User, user => user.children)
+  @ManyToMany(
+    () => User,
+    (user) => user.children,
+  )
   parents: User[];
-  
 }
 
 @InputType()
 export class NewChildInput {
   @Field()
-  @Length(3,50, { message: "Le prénom doit contenir entre 3 et 50 caractères" })
+  @Length(3, 50, {
+    message: "Le prénom doit contenir entre 3 et 50 caractères",
+  })
   firstName: string;
 
   @Field()
-  @Length(2,50, { message: "Le nom doit contenir entre 2 et 100 caractères" })
+  @Length(2, 50, { message: "Le nom doit contenir entre 2 et 100 caractères" })
   lastName: string;
 
   @Field()
-  @IsISO8601({}, { message: "La date est  de format incorrect"})
-  birthDate: Date
+  @IsISO8601({}, { message: "La date est  de format incorrect" })
+  birthDate: Date;
 
   @Field()
-  @IsUrl({}, {message: "Le format attendu doit être une url"})
+  @IsUrl({}, { message: "Le format attendu doit être une url" })
   picture: string;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   healthRecord?: string;
 
   @Field(() => ObjectId)
-  group: ObjectId
+  group: ObjectId;
 
   @Field(() => [ObjectId])
-  parents: ObjectId[]
+  parents: ObjectId[];
 }
 
 @InputType()
 export class UpdateChildInput {
-  @Field({nullable: true})
-  @Length(3,50, { message: "Le prénom doit contenir entre 3 et 50 caractères" })
+  @Field({ nullable: true })
+  @Length(3, 50, {
+    message: "Le prénom doit contenir entre 3 et 50 caractères",
+  })
   firstName?: string;
 
-  @Field({nullable: true})
-  @Length(2,50, { message: "Le nom doit contenir entre 2 et 100 caractères" })
+  @Field({ nullable: true })
+  @Length(2, 50, { message: "Le nom doit contenir entre 2 et 100 caractères" })
   lastName?: string;
 
-  @Field({nullable: true})
-  @IsISO8601({}, { message: "La date est  de format incorrect"})
-  birthDate?: Date
+  @Field({ nullable: true })
+  @IsISO8601({}, { message: "La date est  de format incorrect" })
+  birthDate?: Date;
 
-  @Field({nullable: true})
-  @IsUrl({}, {message: "Le format attendu doit être une url"})
+  @Field({ nullable: true })
+  @IsUrl({}, { message: "Le format attendu doit être une url" })
   picture?: string;
 
-  @Field({nullable: true})
+  @Field({ nullable: true })
   healthRecord?: string;
 
-  @Field(() => ObjectId, {nullable: true})
-  group?: ObjectId
+  @Field(() => ObjectId, { nullable: true })
+  group?: ObjectId;
 
-  @Field(() => [ObjectId], {nullable: true})
-  parents?: ObjectId[]
+  @Field(() => [ObjectId], { nullable: true })
+  parents?: ObjectId[];
 }
