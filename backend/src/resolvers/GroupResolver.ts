@@ -50,6 +50,8 @@ export class GroupResolver {
     return await newGroup.save(); 
   }
 
+  
+
   // UPDATE
   @Mutation(() => Group)
   async updateGroup(
