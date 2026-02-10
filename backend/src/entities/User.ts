@@ -1,12 +1,15 @@
-import { IsEmail, IsStrongPassword, Length } from "class-validator";
+import { IsEmail, IsStrongPassword, IsOptional, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { Child } from "./Child";
 
 export const UserRole = {
   Admin: "admin",
@@ -36,10 +39,10 @@ export class User extends BaseEntity {
   last_name!: string;
 
   @Field()
-  @Column({ type: "varchar", length: 50 })
+  @Column({ type: "varchar", length: 20 })
   phone: string;
 
-  @Column({ name :"password", type: "text" })
+  @Column({ name: "password", type: "text" })
   hashedPassword: string;
 
   @Field()
@@ -54,12 +57,20 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", length: 50, default: UserRole.Parent })
   role: Role;
 
-  @Field(() => Int)
-  @Column({ type: "int", name: "group_id" })
-  group_id: number;
+  @Field(() => Int, { nullable: true })
+  @Column({ type: "int", name: "group_id", nullable: true })
+  group_id: number | null; // null pour les parents et admin
+
+  @Field(() => [Child], { nullable: true })
+  @JoinTable({name: "representatives"})
+  @ManyToMany(
+    () => Child,
+    (child) => child.parents,
+  )
+  children?: Child[];
 }
 
- // Admin crée les comptes avec mdp temporaire
+// Admin crée les comptes avec mdp temporaire
 @InputType()
 export class CreateUserInput {
   @Field()
@@ -67,7 +78,9 @@ export class CreateUserInput {
   email: string;
 
   @Field()
-  @Length(2, 50, { message: "Le prénom doit contenir entre 2 et 50 caractères" })
+  @Length(2, 50, {
+    message: "Le prénom doit contenir entre 2 et 50 caractères",
+  })
   first_name: string;
 
   @Field()
@@ -75,6 +88,9 @@ export class CreateUserInput {
   last_name: string;
 
   @Field()
+  @Length(8, 20, {
+    message: "Le numéro de téléphone doit contenir entre 8 et 20 caractères",
+  })
   phone: string;
 
   @Field()
@@ -90,10 +106,11 @@ export class CreateUserInput {
   @Field()
   role: Role; // parent / staff
 
-  @Field(() => Int)
-  group_id!: number;
+  @Field(() => Int, { nullable: true })
+  group_id: number | null;
 }
- // Tout le monde peut se connecter et changer son mdp
+
+// Tout le monde peut se connecter et changer son mdp
 @InputType()
 export class LoginInput {
   @Field()
@@ -110,7 +127,7 @@ export class LoginInput {
   )
   password: string;
 }
- // L'utilisateur peut changer son mot passe ensuite
+// L'utilisateur peut changer son mot passe ensuite
 @InputType()
 export class ChangePasswordInput {
   @Field()
@@ -132,27 +149,37 @@ export class UpdateUserInput {
   @Field(() => Int)
   id: number;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @IsEmail({}, { message: "L'email doit être valide" })
-  email: string;
+  email?: string | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @Length(2, 50)
-  first_name: string;
+  first_name?: string | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @IsOptional()
   @Length(2, 100)
-  last_name: string;
+  last_name?: string | null;
 
-  @Field({ nullable: true })
-  phone: string;
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Length(8, 20, {
+    message: "Le numéro de téléphone doit contenir entre 8 et 20 caractères",
+  })
+  phone?: string | null;
 
-  @Field({ nullable: true })
-  avatar: string;
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  avatar?: string | null;
 
-  @Field({ nullable: true })
-  role: Role;
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  role?: Role | null;
 
   @Field(() => Int, { nullable: true })
-  group_id: number;
+  @IsOptional()
+  group_id?: number | null;
 }
