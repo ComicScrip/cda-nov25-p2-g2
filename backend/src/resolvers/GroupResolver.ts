@@ -1,59 +1,82 @@
 import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
-import { Group } from "../entities/Group"; //
-import { Planning } from "../entities/Planning"; 
+import { Group } from "../entities/Group";
+import { Planning } from "../entities/Planning";
+import { NotFoundError } from "../errors"; 
 
 @Resolver()
 export class GroupResolver {
   
-  //  READ 
+  // READ
   @Query(() => [Group])
-  async getAllGroups(): Promise<Group[]> {
-    return await Group.find({ relations: ["plannings"] }); //
+  async getAllGroups(
+    @Arg("take", () => Int, { defaultValue: 10 }) take: number,
+    @Arg("skip", () => Int, { defaultValue: 0 }) skip: number
+  ): Promise<Group[]> {
+    return await Group.find({ 
+      relations: ["plannings", "children"],
+      take,
+      skip 
+    });
   }
 
-  // READ 
   @Query(() => Group, { nullable: true })
   async getGroupById(@Arg("group_id", () => Int) id: number): Promise<Group | null> {
-    return await Group.findOne({ 
+    const group = await Group.findOne({ 
       where: { group_id: id }, 
-      relations: ["plannings"] 
-    }); 
+      relations: ["plannings", "children"] 
+    });
+
+    if (!group) throw new NotFoundError();
+    return group;
   }
 
-  // CREATE 
+  // CREATE
   @Mutation(() => Group)
   async createGroup(
-    @Arg("group_name") group_name: string, //
-    @Arg("capacity_group", () => Int) capacity_group: number //
+    @Arg("group_name") group_name: string,
+    @Arg("capacity_group", () => Int) capacity_group: number,
+    @Arg("parent_id", () => Int, { nullable: true }) parentId?: number
   ): Promise<Group> {
     const newGroup = Group.create({
       group_name,
-      capacity_group
+      capacity_group,
     });
+
+    if (parentId) {
+      const parent = await Group.findOneBy({ group_id: parentId });
+      if (parent) newGroup.parent = parent;
+    }
 
     return await newGroup.save(); 
   }
 
-  // UPDATE 
-  @Mutation(() => Group, { nullable: true })
+  // UPDATE
+  @Mutation(() => Group)
   async updateGroup(
     @Arg("group_id", () => Int) id: number,
     @Arg("group_name", { nullable: true }) group_name?: string,
     @Arg("capacity_group", { nullable: true }) capacity_group?: number
-  ): Promise<Group | null> {
+  ): Promise<Group> {
     const group = await Group.findOneBy({ group_id: id });
-    if (!group) return null;
+    
+    if (!group) {
+        throw new NotFoundError({ message: "Group not found" });
+    }
 
-    if (group_name) group.group_name = group_name;
-    if (capacity_group !== undefined) group.capacity_group = capacity_group;
+    Object.assign(group, JSON.parse(JSON.stringify({ group_name, capacity_group })));
 
     return await group.save();
   }
 
-  // DELETE 
+  // DELETE
   @Mutation(() => Boolean)
   async deleteGroup(@Arg("group_id", () => Int) id: number): Promise<boolean> {
     const result = await Group.delete(id);
-    return result.affected !== 0;
+    
+    if (result.affected === 0) {
+      throw new NotFoundError({ message: "Group to delete not found" });
+    }
+    
+    return true;
   }
 }
