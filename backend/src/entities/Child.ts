@@ -1,5 +1,5 @@
 import { Field, InputType, Int, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User";
 import { Report } from "./Report";
 import { Group } from "./Group";
@@ -22,20 +22,21 @@ export class Child extends BaseEntity {
   lastName: string;
 
   @Field()
-  BirthDate: Date;
+  @CreateDateColumn()
+  birthDate: Date;
 
   @Field()
   @Column({type: "text"})
   picture: string
 
-  @Field()
-  @Column({type: "text", nullable: true})
+  @Field({nullable: true}) 
+  @Column({type: "text", nullable: true}) 
   healthRecord: string
 
   // Child relations 
   @Field(() => Group)
   @ManyToOne(() => Group, group => group.children)
-  group: Group;
+  group: Group;  // FK
 
   @Field(() => [Report])
   @OneToMany(() => Report, report => report.child)
@@ -44,7 +45,6 @@ export class Child extends BaseEntity {
   @Field(() => [User])
   @ManyToMany(() => User, user => user.children)
   parents: User[];
-  
 }
 
 @InputType()
