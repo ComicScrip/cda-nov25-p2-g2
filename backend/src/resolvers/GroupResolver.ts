@@ -44,12 +44,11 @@ export class GroupResolver {
 
     if (parentId) {
       const parent = await Group.findOneBy({ group_id: parentId });
-      if (parent) newGroup.parent = parent;
+      if (parent) newGroup.parent_id = parentId;
     }
 
     return await newGroup.save(); 
   }
-
   
 
   // UPDATE
