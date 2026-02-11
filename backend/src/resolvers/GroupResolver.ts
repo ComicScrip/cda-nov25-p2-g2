@@ -34,12 +34,12 @@ export class GroupResolver {
   @Mutation(() => Group)
   async createGroup(
     @Arg("name") name: string,
-    @Arg("capacity", () => Int) capacity_group: number,
+    @Arg("capacity", () => Int) capacity: number,
     @Arg("id", () => Int, { nullable: true }) parentId?: number
   ): Promise<Group> {
     const newGroup = Group.create({
       name,
-      capacity_group,
+      capacity,
     });
 
     if (parentId) {
@@ -69,7 +69,7 @@ export class GroupResolver {
     return await group.save();
   }
 
-  
+
 
   // DELETE
   @Mutation(() => Boolean)
