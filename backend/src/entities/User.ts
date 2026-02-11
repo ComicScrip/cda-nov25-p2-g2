@@ -9,6 +9,7 @@ import {
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
+  JoinColumn,
 } from "typeorm";
 import { Child } from "./Child";
 import { Group } from "./Group";
@@ -60,11 +61,15 @@ export class User extends BaseEntity {
   role: Role;
 
   @Field(() => Group, { nullable: true })
-  @ManyToOne(() => Group, group => group.staff)
-  group: Group; 
+  @ManyToOne(
+    () => Group,
+    (group) => group.staff,
+  )
+  @JoinColumn({ name: "group_id" })
+  group: Group | null;
 
   @Field(() => [Child], { nullable: true })
-  @JoinTable({name: "representatives"})
+  @JoinTable({ name: "representatives" })
   @ManyToMany(
     () => Child,
     (child) => child.parents,
