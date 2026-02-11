@@ -4,11 +4,8 @@ import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, On
 import { User } from "./User";
 import { Report } from "./Report";
 import { Group } from "./Group";
-import {  IsISO8601, IsUrl, Length } from "class-validator";
 import { ObjectId } from "../types";
-import { Group } from "./Group";
-import { Report } from "./Report";
-import { User } from "./User";
+
 
 @ObjectType()
 @Entity()
@@ -50,7 +47,7 @@ export class Child extends BaseEntity {
   reports: Report[];
 
   @Field(() => [User])
-  @ManyToMany(() => User, user => user.parents)
+  @ManyToMany(() => User, user => user.children)
   parents: User[];
 }
 
