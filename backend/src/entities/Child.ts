@@ -42,7 +42,7 @@ export class Child extends BaseEntity {
   reports: Report[]
 
   @Field(() => [User])
-  @ManyToMany(() => User, user => user.children)
+  @ManyToMany(() => User, user => user.parents)
   parents: User[];
   
 }

@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn
 } from "typeorm";
 
+import { Child } from "./Child";
 import { Planning } from "./Planning"; 
 
 @ObjectType()
@@ -29,4 +30,11 @@ export class Group extends BaseEntity {
   @OneToMany(() => Planning, (planning) => planning.group)
   plannings: Planning[];
     planning: any;
+
+      @Field(() => [Child], { nullable: true })
+  @OneToMany(
+    () => Child,
+    (child) => child.group,
+  )
+  children: Child[];
 }
