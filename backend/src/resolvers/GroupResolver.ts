@@ -69,6 +69,8 @@ export class GroupResolver {
     return await group.save();
   }
 
+  
+
   // DELETE
   @Mutation(() => Boolean)
   async deleteGroup(@Arg("group_id", () => Int) id: number): Promise<boolean> {
