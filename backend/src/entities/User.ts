@@ -7,9 +7,11 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { Child } from "./Child";
+import { Group } from "./Group";
 
 export const UserRole = {
   Admin: "admin",
@@ -57,9 +59,9 @@ export class User extends BaseEntity {
   @Column({ type: "varchar", length: 50, default: UserRole.Parent })
   role: Role;
 
-  @Field(() => Int, { nullable: true })
-  @Column({ type: "int", name: "group_id", nullable: true })
-  group_id: number | null; // null pour les parents et admin
+  @Field(() => Group, { nullable: true })
+  @ManyToOne(() => Group, group => group.staff)
+  group: Group; 
 
   @Field(() => [Child], { nullable: true })
   @JoinTable({name: "representatives"})
