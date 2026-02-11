@@ -17,6 +17,7 @@ import {
   UpdateUserInput,
   User,
 } from "../entities/User";
+import { Group } from "../entities/Group";
 import type { GraphQLContext } from "../types";
 import { NotFoundError, UnauthenticatedError } from "../errors";
 
@@ -39,13 +40,20 @@ function assertRoleGroupRule(role: string, groupId: number | null | undefined) {
     });
   }
 }
+async function loadGroupOrThrow(groupId: number) {
+  const group = await Group.findOne({ where: { id: groupId } });
+  if (!group) {
+    throw new NotFoundError({ message: "Group not found" });
+  }
+  return group;
+}
 
 @Resolver()
 export default class UserResolver {
   @Authorized("admin")
   @Query(() => [User])
   async users() {
-    return await User.find();
+    return await User.find({ relations: { group: true } });
   }
 
   // Créer un compte (parent / staff) avec mot de passe temporaire
@@ -64,7 +72,10 @@ export default class UserResolver {
     }
     assertRoleGroupRule(data.role, data.group_id);
     const hashedPassword = await hash(data.password);
-
+    const group =
+      data.role === "staff" && data.group_id != null
+        ? await loadGroupOrThrow(data.group_id)
+        : null;
     const newUser = User.create({
       email,
       first_name: data.first_name,
@@ -72,7 +83,7 @@ export default class UserResolver {
       phone: data.phone,
       hashedPassword,
       role: data.role,
-      group_id: data.role === "staff" ? (data.group_id as number) : null,
+      group,
     });
 
     return await newUser.save();
@@ -85,50 +96,62 @@ export default class UserResolver {
     @Arg("data", () => UpdateUserInput, { validate: true })
     data: UpdateUserInput,
   ) {
-    const user = await User.findOne({ where: { id: data.id } });
+    const user = await User.findOne({
+      where: { id: data.id },
+      relations: { group: true },
+    });
+
     if (!user) {
       throw new NotFoundError({ message: "User not found" });
     }
 
     const update: Partial<User> = {};
+
     if (data.email !== undefined && data.email !== null) {
       update.email = normalizeEmail(data.email);
     }
+
     if (data.first_name !== undefined && data.first_name !== null) {
       update.first_name = data.first_name;
     }
+
     if (data.last_name !== undefined && data.last_name !== null) {
       update.last_name = data.last_name;
     }
+
     if (data.phone !== undefined && data.phone !== null) {
       update.phone = data.phone;
     }
+
     if (data.avatar !== undefined && data.avatar !== null) {
       update.avatar = data.avatar;
     }
 
-    const nextRole = (data.role ?? user.role) as string;
-    if (data.role !== undefined && data.role !== null) update.role = data.role;
+    if (data.role !== undefined && data.role !== null) {
+      update.role = data.role;
+    }
+
+    const nextRole = data.role ?? user.role;
     if (nextRole === "staff") {
-      if (data.group_id !== undefined) {
-        update.group_id = data.group_id;
-      }
-      const finalGroupId = update.group_id ?? user.group_id;
-      if (finalGroupId == null) {
+      if (data.group_id == null) {
         throw new GraphQLError("Staff must have a group", {
           extensions: { code: "STAFF_GROUP_REQUIRED", http: { status: 400 } },
         });
       }
-    } else {
-      if (data.group_id !== undefined && data.group_id !== null) {
-        throw new GraphQLError("Parent/Admin must not have a group", {
-          extensions: { code: "GROUP_NOT_ALLOWED", http: { status: 400 } },
-        });
+
+      const group = await Group.findOne({ where: { id: data.group_id } });
+
+      if (!group) {
+        throw new NotFoundError({ message: "Group not found" });
       }
-      update.group_id = null;
+
+      update.group = group;
+    } else {
+      update.group = null;
     }
 
     Object.assign(user, update);
+
     return await user.save();
   }
 
