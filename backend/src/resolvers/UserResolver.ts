@@ -1,6 +1,14 @@
 import { hash, verify } from "argon2";
 import { GraphQLError } from "graphql";
-import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { endSession, getCurrentUser, startSession } from "../auth";
 import {
   ChangePasswordInput,
@@ -10,9 +18,26 @@ import {
   User,
 } from "../entities/User";
 import type { GraphQLContext } from "../types";
+import { NotFoundError, UnauthenticatedError } from "../errors";
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();
+}
+
+function assertRoleGroupRule(role: string, groupId: number | null | undefined) {
+  if (role === "staff") {
+    if (groupId == null) {
+      throw new GraphQLError("Staff must have a group", {
+        extensions: { code: "STAFF_GROUP_REQUIRED", http: { status: 400 } },
+      });
+    }
+    return;
+  }
+  if (groupId != null) {
+    throw new GraphQLError("Parent/Admin must not have a group", {
+      extensions: { code: "GROUP_NOT_ALLOWED", http: { status: 400 } },
+    });
+  }
 }
 
 @Resolver()
@@ -27,7 +52,8 @@ export default class UserResolver {
   @Authorized("admin")
   @Mutation(() => User)
   async createUser(
-    @Arg("data", () => CreateUserInput, { validate: true }) data: CreateUserInput,
+    @Arg("data", () => CreateUserInput, { validate: true })
+    data: CreateUserInput,
   ) {
     const email = normalizeEmail(data.email);
     const existingUser = await User.findOne({ where: { email } });
@@ -36,6 +62,7 @@ export default class UserResolver {
         extensions: { code: "EMAIL_ALREADY_TAKEN", http: { status: 400 } },
       });
     }
+    assertRoleGroupRule(data.role, data.group_id);
     const hashedPassword = await hash(data.password);
 
     const newUser = User.create({
@@ -45,7 +72,7 @@ export default class UserResolver {
       phone: data.phone,
       hashedPassword,
       role: data.role,
-      group_id: data.group_id,
+      group_id: data.role === "staff" ? (data.group_id as number) : null,
     });
 
     return await newUser.save();
@@ -55,23 +82,53 @@ export default class UserResolver {
   @Authorized("admin")
   @Mutation(() => User)
   async updateUser(
-    @Arg("data", () => UpdateUserInput, { validate: true }) data: UpdateUserInput,
+    @Arg("data", () => UpdateUserInput, { validate: true })
+    data: UpdateUserInput,
   ) {
     const user = await User.findOne({ where: { id: data.id } });
     if (!user) {
-      throw new GraphQLError("User not found", {
-        extensions: { code: "USER_NOT_FOUND", http: { status: 404 } },
-      });
+      throw new NotFoundError({ message: "User not found" });
     }
 
-    if (data.email !== undefined) user.email = normalizeEmail(data.email);
-    if (data.first_name !== undefined) user.first_name = data.first_name;
-    if (data.last_name !== undefined) user.last_name = data.last_name;
-    if (data.phone !== undefined) user.phone = data.phone;
-    if (data.avatar !== undefined) user.avatar = data.avatar;
-    if (data.role !== undefined) user.role = data.role;
-    if (data.group_id !== undefined) user.group_id = data.group_id;
+    const update: Partial<User> = {};
+    if (data.email !== undefined && data.email !== null) {
+      update.email = normalizeEmail(data.email);
+    }
+    if (data.first_name !== undefined && data.first_name !== null) {
+      update.first_name = data.first_name;
+    }
+    if (data.last_name !== undefined && data.last_name !== null) {
+      update.last_name = data.last_name;
+    }
+    if (data.phone !== undefined && data.phone !== null) {
+      update.phone = data.phone;
+    }
+    if (data.avatar !== undefined && data.avatar !== null) {
+      update.avatar = data.avatar;
+    }
 
+    const nextRole = (data.role ?? user.role) as string;
+    if (data.role !== undefined && data.role !== null) update.role = data.role;
+    if (nextRole === "staff") {
+      if (data.group_id !== undefined) {
+        update.group_id = data.group_id;
+      }
+      const finalGroupId = update.group_id ?? user.group_id;
+      if (finalGroupId == null) {
+        throw new GraphQLError("Staff must have a group", {
+          extensions: { code: "STAFF_GROUP_REQUIRED", http: { status: 400 } },
+        });
+      }
+    } else {
+      if (data.group_id !== undefined && data.group_id !== null) {
+        throw new GraphQLError("Parent/Admin must not have a group", {
+          extensions: { code: "GROUP_NOT_ALLOWED", http: { status: 400 } },
+        });
+      }
+      update.group_id = null;
+    }
+
+    Object.assign(user, update);
     return await user.save();
   }
 
@@ -81,9 +138,7 @@ export default class UserResolver {
   async deleteUser(@Arg("id", () => Int) id: number) {
     const user = await User.findOne({ where: { id } });
     if (!user) {
-      throw new GraphQLError("User not found", {
-        extensions: { code: "USER_NOT_FOUND", http: { status: 404 } },
-      });
+      throw new NotFoundError({ message: "User not found" });
     }
 
     await user.remove();
@@ -98,15 +153,15 @@ export default class UserResolver {
     const email = normalizeEmail(data.email);
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new GraphQLError("Invalid email or password", {
-        extensions: { code: "INVALID_CREDENTIALS", http: { status: 401 } },
+      throw new UnauthenticatedError({
+        message: "Invalid email or password",
       });
     }
 
     const isPasswordValid = await verify(user.hashedPassword, data.password);
     if (!isPasswordValid) {
-      throw new GraphQLError("Invalid email or password", {
-        extensions: { code: "INVALID_CREDENTIALS", http: { status: 401 } },
+      throw new UnauthenticatedError({
+        message: "Invalid email or password",
       });
     }
 

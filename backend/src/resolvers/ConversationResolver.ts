@@ -1,6 +1,6 @@
-import { GraphQLError } from "graphql";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { getCurrentUser } from "../auth";
+import { ForbiddenError, NotFoundError } from "../errors";
 import { Conversation } from "../entities/Conversation";
 import { User } from "../entities/User";
 import type { GraphQLContext } from "../types";
@@ -10,14 +10,11 @@ export default class ConversationResolver {
   @Query(() => [Conversation])
   // myConversations : affiche toutes mes conversations dans un tableau, sans les détails - uniquement la date et les interlocuteurs
   async myConversations(@Ctx() context: GraphQLContext) {
+    // getCurrentUser gère l'erreur UnauthenticatedError si l'utilisateur n'est pas connecté
     const currentUser = await getCurrentUser(context);
-    if (!currentUser) {
-      throw new GraphQLError("Vous devez être connecté", {
-        extensions: { code: "UNAUTHENTICATED", http: { status: 401 } },
-      });
-    }
 
     // Récupère toutes les conversations où l'utilisateur est soit l'initiator, soit le participant
+    // TypeORM utilise déjà un OR avec le tableau where: [...]
     const conversations = await Conversation.find({
       where: [
         { initiator: { id: currentUser.id } },
@@ -37,32 +34,23 @@ export default class ConversationResolver {
     @Ctx() context: GraphQLContext,
   ) {
     const currentUser = await getCurrentUser(context);
-    if (!currentUser) {
-      throw new GraphQLError("Vous devez être connecté", {
-        extensions: { code: "UNAUTHENTICATED", http: { status: 401 } },
-      });
-    }
 
-    // Vérifie que la conversation existe si on la charche par son id
+    // Vérifie que la conversation existe
     const conversation = await Conversation.findOne({
       where: { id },
       relations: ["initiator", "participant", "messages"],
     });
 
     if (!conversation) {
-      throw new GraphQLError("Conversation introuvable", {
-        extensions: { code: "NOT_FOUND", http: { status: 404 } },
-      });
+      throw new NotFoundError({ message: "Conversation introuvable" });
     }
 
-    // Vérifie que l'utilisateur fait partie de la conversation, soit comme initiator, soit comme participant
+    // Vérifie que l'utilisateur fait partie de la conversation
     if (
       conversation.initiator.id !== currentUser.id &&
       conversation.participant.id !== currentUser.id
     ) {
-      throw new GraphQLError("Vous n'avez pas accès à cette conversation", {
-        extensions: { code: "FORBIDDEN", http: { status: 403 } },
-      });
+      throw new ForbiddenError({ message: "Vous n'avez pas accès à cette conversation" });
     }
 
     return conversation;
@@ -74,31 +62,21 @@ export default class ConversationResolver {
     @Ctx() context: GraphQLContext,
   ) {
     const currentUser = await getCurrentUser(context);
-    if (!currentUser) {
-      throw new GraphQLError("Vous devez être connecté", {
-        extensions: { code: "UNAUTHENTICATED", http: { status: 401 } },
-      });
-    }
 
     // Vérifie que l'utilisateur ne crée pas une conversation avec lui-même
     if (currentUser.id === participantId) {
-      throw new GraphQLError(
-        "Vous ne pouvez pas créer une conversation avec vous-même",
-        {
-          extensions: { code: "INVALID_INPUT", http: { status: 400 } },
-        },
-      );
+      throw new ForbiddenError({
+        message: "Vous ne pouvez pas créer une conversation avec vous-même",
+      });
     }
 
     // Vérifie que le participant existe
     const participant = await User.findOne({ where: { id: participantId } });
     if (!participant) {
-      throw new GraphQLError("Utilisateur introuvable", {
-        extensions: { code: "NOT_FOUND", http: { status: 404 } },
-      });
+      throw new NotFoundError({ message: "Utilisateur introuvable" });
     }
 
-    // Vérifie qu'une conversation n'existe pas déjà entre ces deux utilisateurs pour ne pas créer un doublon
+    // Vérifie qu'une conversation n'existe pas déjà entre ces deux utilisateurs
     const existingConversation = await Conversation.findOne({
       where: [
         {
@@ -113,15 +91,9 @@ export default class ConversationResolver {
     });
 
     if (existingConversation) {
-      throw new GraphQLError(
-        "Une conversation existe déjà avec cet utilisateur",
-        {
-          extensions: {
-            code: "CONVERSATION_ALREADY_EXISTS",
-            http: { status: 400 },
-          },
-        },
-      );
+      throw new ForbiddenError({
+        message: "Une conversation existe déjà avec cet utilisateur",
+      });
     }
 
     // Crée la nouvelle conversation
