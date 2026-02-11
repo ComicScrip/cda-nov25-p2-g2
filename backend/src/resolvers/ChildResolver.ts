@@ -1,6 +1,6 @@
 import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Child, NewChildInput, UpdateChildInput } from "../entities/Child";
-import { GraphQLError } from "graphql/error";
+import { NotFoundError } from "../errors";
 
 @Resolver()
 export default class ChildResolver {
@@ -18,9 +18,7 @@ export default class ChildResolver {
     });
 
     if(!child) {
-      throw new GraphQLError("Child not found", {
-        extensions : { code: "NOT_FOUND", http: { status: 404 } }
-      });
+      throw new NotFoundError();
     }
     return child;
   }
@@ -43,8 +41,10 @@ export default class ChildResolver {
       where: { id },
       relations: ["group", "reports", "parents"]
     });
-    if (!childToUpdate)
-      throw new GraphQLError("Child not found", { extensions: { code: "NOT_FOUND", http: { status: 404 } }});
+
+    if (!childToUpdate) {
+      throw new NotFoundError();
+    }
 
     Object.assign(childToUpdate, data);
     await childToUpdate.save();
@@ -62,9 +62,9 @@ export default class ChildResolver {
       relations: ["group", "reports", "parents"]
     });
 
-    if (!childToDelete)
-      throw new GraphQLError("Child not found", { extensions: { code: "NOT_FOUND", http: { status: 404 } }
-      });
+    if (!childToDelete) {
+      throw new NotFoundError();
+    }
 
     await childToDelete.remove();
     return "Child has been deleted correctly !";

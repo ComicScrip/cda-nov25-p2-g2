@@ -14,7 +14,7 @@ import { Group } from "./Group";
 export class Planning extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  planning_id: number;
+  id: number;
 
   @Field({ nullable: true })
   @Column({ type: "text", nullable: true })

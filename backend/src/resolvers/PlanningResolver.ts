@@ -1,72 +1,108 @@
-import { Resolver, Query, Mutation, Arg, Int } from "type-graphql";
-import { Planning } from "../entities/Planning"; 
+import { Resolver, Query, Mutation, Arg, Int, InputType, Field } from "type-graphql";
+import { Planning } from "../entities/Planning";
 import { Group } from "../entities/Group";
+import { NotFoundError } from "../errors"; // Ajuste le chemin
+
+@InputType()
+class PlanningInput {
+  @Field()
+  meal: string;
+
+  @Field()
+  morning_nap: string;
+
+  @Field()
+  afternoon_nap: string;
+
+  @Field()
+  date: Date;
+
+  @Field(() => Int)
+  groupId: number;
+}
+
+@InputType()
+class UpdatePlanningInput {
+  @Field({ nullable: true })
+  meal?: string;
+
+  @Field({ nullable: true })
+  morning_nap?: string;
+
+  @Field({ nullable: true })
+  afternoon_nap?: string;
+
+  @Field({ nullable: true })
+  date?: Date;
+}
 
 @Resolver()
 export class PlanningResolver {
-  
-  //  READ 
+
+  // READ
   @Query(() => [Planning])
   async getAllPlannings(): Promise<Planning[]> {
     return await Planning.find({ relations: ["group"] });
   }
 
-  //  READ 
-  @Query(() => Planning, { nullable: true })
-  async getPlanningById(@Arg("id", () => Int) id: number): Promise<Planning | null> {
-    return await Planning.findOne({ 
-      where: { planning_id: id }, 
+  @Query(() => Planning)
+  async getPlanningById(@Arg("id", () => Int) id: number): Promise<Planning> {
+    const planning = await Planning.findOne({ 
+      where: { id: id }, 
       relations: ["group"] 
     });
+    
+    if (!planning) throw new NotFoundError();
+    return planning;
   }
-  
 
-  //  CREATE 
+  // CREATE
   @Mutation(() => Planning)
   async createPlanning(
-    @Arg("meal") meal: string,
-    @Arg("morning_nap") morning_nap: string,
-    @Arg("date") date: Date,
-    @Arg("groupId", () => Int) groupId: number
+    @Arg("data") data: PlanningInput
   ): Promise<Planning> {
+    const group = await Group.findOneBy({ id: data.groupId });
     
-    const group = await Group.findOneBy({ group_id: groupId });
-    if (!group) throw new Error("Groupe non trouvé !");
+    if (!group) {
+      throw new NotFoundError({ message: "Group not found for this planning" });
+    }
 
     const newPlanning = Planning.create({
-      meal,
-      morning_nap,
-      afternoon_nap: "", 
-      morning_activities: "", 
-      afternoon_activities: "", 
-      snack: "", 
-      date,
-      group
+      ...data,
+      group: group
     });
 
     return await newPlanning.save();
   }
 
-  // UPDATE 
-  @Mutation(() => Planning, { nullable: true })
+  // UPDATE
+  @Mutation(() => Planning)
   async updatePlanning(
     @Arg("id", () => Int) id: number,
-    @Arg("meal", { nullable: true }) meal?: string,
-    @Arg("morning_nap", { nullable: true }) morning_nap?: string
-  ): Promise<Planning | null> {
-    const planning = await Planning.findOneBy({ planning_id: id });
-    if (!planning) return null;
+    @Arg("data") data: UpdatePlanningInput
+  ): Promise<Planning> {
+    const planning = await Planning.findOneBy({ id: id });
 
-    if (meal) planning.meal = meal;
-    if (morning_nap) planning.morning_nap = morning_nap;
+    if (!planning) {
+      throw new NotFoundError({ message: "Planning not found" });
+    }
+
+    // Utilisation de Object.assign (en filtrant les undefined)
+    const updates = JSON.parse(JSON.stringify(data));
+    Object.assign(planning, updates);
 
     return await planning.save();
   }
 
-  //DELETE 
+  // DELETE
   @Mutation(() => Boolean)
   async deletePlanning(@Arg("id", () => Int) id: number): Promise<boolean> {
     const result = await Planning.delete(id);
-    return result.affected !== 0; 
+
+    if (result.affected === 0) {
+      throw new NotFoundError({ message: "Planning to delete not found" });
+    }
+
+    return true;
   }
 }

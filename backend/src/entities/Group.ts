@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn
 } from "typeorm";
 
+import { Child } from "./Child";
 import { Planning } from "./Planning"; 
 
 @ObjectType()
@@ -14,19 +15,26 @@ import { Planning } from "./Planning";
 export class Group extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  group_id: number;
+  id: number;
 
   @Field()
   @Column({ type: "varchar", length: 100 })
-  group_name: string;
+  name: string;
 
   @Field(() => Int)
   @Column({ type: "int" })
-  capacity_group: number;
+  capacity: number;
 
   // Un groupe peut avoir plusieurs plannings
   @Field(() => [Planning], { nullable: true })
   @OneToMany(() => Planning, (planning) => planning.group)
   plannings: Planning[];
     planning: any;
+
+      @Field(() => [Child], { nullable: true })
+  @OneToMany(
+    () => Child,
+    (child) => child.group,
+  )
+  children: Child[];
 }

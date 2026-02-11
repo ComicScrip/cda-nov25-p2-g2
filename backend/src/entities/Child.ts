@@ -1,14 +1,10 @@
 import { IsISO8601, IsUrl, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  ManyToMany,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from "typeorm";
+import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./User";
+import { Report } from "./Report";
+import { Group } from "./Group";
+import {  IsISO8601, IsUrl, Length } from "class-validator";
 import { ObjectId } from "../types";
 import { Group } from "./Group";
 import { Report } from "./Report";
@@ -30,23 +26,21 @@ export class Child extends BaseEntity {
   lastName: string;
 
   @Field()
-  BirthDate: Date;
+  @CreateDateColumn()
+  birthDate: Date;
 
   @Field()
   @Column({ type: "text" })
   picture: string;
 
-  @Field()
-  @Column({ type: "text", nullable: true })
-  healthRecord: string;
+  @Field({nullable: true}) 
+  @Column({type: "text", nullable: true}) 
+  healthRecord: string
 
   // Child relations
   @Field(() => Group)
-  @ManyToOne(
-    () => Group,
-    (group) => group.children,
-  )
-  group: Group;
+  @ManyToOne(() => Group, group => group.children)
+  group: Group;  // FK
 
   @Field(() => [Report])
   @OneToMany(
@@ -56,10 +50,7 @@ export class Child extends BaseEntity {
   reports: Report[];
 
   @Field(() => [User])
-  @ManyToMany(
-    () => User,
-    (user) => user.children,
-  )
+  @ManyToMany(() => User, user => user.parents)
   parents: User[];
 }
 
