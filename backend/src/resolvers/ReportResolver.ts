@@ -33,7 +33,7 @@ export default class ReportResolver {
     data: NewReportInput
   ): Promise<Report> {
     const child = await Child.findOne({
-      where: { id: data.child},
+      where: { id: data.child?.id},
       relations: ["child", "child.representatives"],
     });
 
