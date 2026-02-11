@@ -9,6 +9,7 @@ import {
 
 import { Child } from "./Child";
 import { Planning } from "./Planning"; 
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -37,4 +38,8 @@ export class Group extends BaseEntity {
     (child) => child.group,
   )
   children: Child[];
+
+  @Field(() => [User])
+  @OneToMany(() => User, user => user.group)
+  staff: User[]
 }
