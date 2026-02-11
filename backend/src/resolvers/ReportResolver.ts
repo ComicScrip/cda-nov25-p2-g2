@@ -1,7 +1,7 @@
-import { GraphQLError } from "graphql/error";
-import { Arg, GraphQLISODateTime, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Child } from "../entities/Child";
-import { Report } from "../entities/Report";
+import { NewReportInput, Report, UpdateReportInput } from "../entities/Report";
+import { NotFoundError } from "../errors";
 
 @Resolver()
 export default class ReportResolver {
@@ -29,33 +29,44 @@ export default class ReportResolver {
   //   creer un report
   @Mutation(() => Report)
   async createReport(
-    @Arg("childId") childId: number,
-    @Arg("isPresent") isPresent: boolean,
-    @Arg("date", () => GraphQLISODateTime) date: Date,
-    @Arg("staff_comment", { nullable: true }) staff_comment?: string,
-    @Arg("baby_mood", { nullable: true }) baby_mood?: string,
-    @Arg("picture", { nullable: true }) picture?: string,
+    @Arg("data", () => NewReportInput, { validate: true })
+    data: NewReportInput
   ): Promise<Report> {
     const child = await Child.findOne({
-      where: { id: childId },
-      relations: ["child", "child.represent"],
+      where: { id: data.child},
+      relations: ["child", "child.representatives"],
     });
 
     if (!child) {
-      throw new GraphQLError("child not found", {
-        extensions: { code: "NOT_FOUND", http: { status: 404 } },
-      });
+      throw new NotFoundError()
     }
 
-    const report = await Report.create({
-      child,
-      isPresent,
-      date: new Date(Date.now()),
-      staff_comment,
-      baby_mood,
-      picture,
-    }).save();
+    const newReport = new Report();
+    
+    Object.assign(newReport, data);
+    newReport.child = child;
+    newReport.date = new Date();
+    await newReport.save();
+    return newReport;
+  }
 
-    return report;
+  //  modifier un report
+  @Mutation(() => Report)
+  async updateReport(
+    @Arg("id", () => Int) id: number,
+    @Arg("data", () => UpdateReportInput, { validate: true }) data: UpdateReportInput
+  ): Promise<Report> {
+  
+    const reportToUpdate = await Report.findOne({
+      where: { id },
+      relations: ["child", "child.representatives"],
+    });
+  
+    if (!reportToUpdate) throw new NotFoundError();
+  
+    Object.assign(reportToUpdate, data);
+    await reportToUpdate.save();
+  
+    return reportToUpdate;
   }
 }

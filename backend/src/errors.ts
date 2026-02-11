@@ -27,3 +27,4 @@ export class NotFoundError extends GraphQLError {
     });
   }
 }
+
