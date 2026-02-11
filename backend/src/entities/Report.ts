@@ -10,6 +10,13 @@ import {
 import { ObjectId } from "../types";
 import { Child } from "./Child";
 
+
+export enum baby_moodFormat {
+  Bad= "bad",
+  Neutral= "neutral",
+  Good= "good"
+}
+
 @ObjectType()
 @Entity()
 export class Report extends BaseEntity {
@@ -30,8 +37,8 @@ export class Report extends BaseEntity {
   staff_comment: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
-  baby_mood: string;
+  @Column({ type:"enum", enum:"baby_moodFormat", nullable: true })
+  baby_mood: baby_moodFormat;
 
   @Field()
   @Column({ nullable: true })
@@ -86,7 +93,7 @@ export class UpdateReportInput {
   staff_comment?: string;
 
   @Field({ nullable: true })
-  baby_mood?: string;
+  baby_mood?: Enumerator;
 
   @Field({ nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
