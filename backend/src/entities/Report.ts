@@ -1,19 +1,24 @@
-import {
-  IsBoolean,
-  IsISO8601,
-  IsUrl,
-  Length,
-} from "class-validator";
-import { Field, ID, InputType, ObjectType } from "type-graphql";
+import { IsBoolean, IsISO8601, IsUrl, Length } from "class-validator";
+import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   Entity,
   ManyToOne,
-  ObjectId,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { ObjectId } from "../types";
 import { Child } from "./Child";
+
+export enum baby_moodFormat {
+  Bad = "bad",
+  Neutral = "neutral",
+  Good = "good",
+}
+
+registerEnumType(baby_moodFormat, {
+  name: "baby_moodFormat",
+});
 
 @ObjectType()
 @Entity()
@@ -30,13 +35,13 @@ export class Report extends BaseEntity {
   @Column()
   date: Date;
 
-  @Field({nullable : true})
+  @Field({ nullable: true })
   @Column({ nullable: true })
   staff_comment: string;
 
-  @Field({nullable : true})
-  @Column({ nullable: true })
-  baby_mood: string;
+  @Field({ nullable: true })
+  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
+  baby_mood: baby_moodFormat;
 
   @Field()
   @Column({ nullable: true })
@@ -60,14 +65,15 @@ export class NewReportInput {
   @IsISO8601({}, { message: "La date est  de format incorrect" })
   date: Date;
 
-  @Field({nullable : true})
+  @Field({ nullable: true })
   @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
   staff_comment: string;
 
-  @Field({nullable : true})
-  baby_mood: string;
+  @Field({ nullable: true })
+  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
+  baby_mood: baby_moodFormat;
 
-  @Field({nullable : true})
+  @Field({ nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
   picture: string;
 
@@ -85,14 +91,15 @@ export class UpdateReportInput {
   @IsISO8601({}, { message: "La date est  de format incorrect" })
   date?: Date;
 
-  @Field({nullable : true})
+  @Field({ nullable: true })
   @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
   staff_comment?: string;
 
-  @Field({nullable : true})
-  baby_mood?: string;
+  @Field({ nullable: true })
+  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
+  baby_mood: baby_moodFormat;
 
-  @Field({nullable : true})
+  @Field({ nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
   picture?: string;
 
