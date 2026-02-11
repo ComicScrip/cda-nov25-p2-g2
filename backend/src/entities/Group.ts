@@ -15,15 +15,15 @@ import { Planning } from "./Planning";
 export class Group extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
-  group_id: number;
+  id: number;
 
   @Field()
   @Column({ type: "varchar", length: 100 })
-  group_name: string;
+  name: string;
 
   @Field(() => Int)
   @Column({ type: "int" })
-  capacity_group: number;
+  capacity: number;
 
   // Un groupe peut avoir plusieurs plannings
   @Field(() => [Planning], { nullable: true })

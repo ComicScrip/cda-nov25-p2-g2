@@ -20,9 +20,9 @@ export class GroupResolver {
   }
 
   @Query(() => Group, { nullable: true })
-  async getGroupById(@Arg("group_id", () => Int) id: number): Promise<Group | null> {
+  async getGroupById(@Arg("id", () => Int) id: number): Promise<Group | null> {
     const group = await Group.findOne({ 
-      where: { group_id: id }, 
+      where: { id: id }, 
       relations: ["plannings", "children"] 
     });
 
@@ -33,18 +33,18 @@ export class GroupResolver {
   // CREATE
   @Mutation(() => Group)
   async createGroup(
-    @Arg("group_name") group_name: string,
-    @Arg("capacity_group", () => Int) capacity_group: number,
-    @Arg("parent_id", () => Int, { nullable: true }) parentId?: number
+    @Arg("name") name: string,
+    @Arg("capacity", () => Int) capacity_group: number,
+    @Arg("id", () => Int, { nullable: true }) parentId?: number
   ): Promise<Group> {
     const newGroup = Group.create({
-      group_name,
+      name,
       capacity_group,
     });
 
     if (parentId) {
-      const parent = await Group.findOneBy({ group_id: parentId });
-      if (parent) newGroup.parent_id = parentId;
+      const parent = await Group.findOneBy({ id: parentId });
+      if (parent) newGroup.id = parentId;
     }
 
     return await newGroup.save(); 
@@ -54,11 +54,11 @@ export class GroupResolver {
   // UPDATE
   @Mutation(() => Group)
   async updateGroup(
-    @Arg("group_id", () => Int) id: number,
-    @Arg("group_name", { nullable: true }) group_name?: string,
-    @Arg("capacity_group", { nullable: true }) capacity_group?: number
+    @Arg("id", () => Int) id: number,
+    @Arg("name", { nullable: true }) group_name?: string,
+    @Arg("capacity", { nullable: true }) capacity_group?: number
   ): Promise<Group> {
-    const group = await Group.findOneBy({ group_id: id });
+    const group = await Group.findOneBy({ id: id });
     
     if (!group) {
         throw new NotFoundError({ message: "Group not found" });
@@ -68,6 +68,8 @@ export class GroupResolver {
 
     return await group.save();
   }
+
+  
 
   // DELETE
   @Mutation(() => Boolean)

@@ -48,7 +48,7 @@ export class PlanningResolver {
   @Query(() => Planning)
   async getPlanningById(@Arg("id", () => Int) id: number): Promise<Planning> {
     const planning = await Planning.findOne({ 
-      where: { planning_id: id }, 
+      where: { id: id }, 
       relations: ["group"] 
     });
     
@@ -61,7 +61,7 @@ export class PlanningResolver {
   async createPlanning(
     @Arg("data") data: PlanningInput
   ): Promise<Planning> {
-    const group = await Group.findOneBy({ group_id: data.groupId });
+    const group = await Group.findOneBy({ id: data.groupId });
     
     if (!group) {
       throw new NotFoundError({ message: "Group not found for this planning" });
@@ -81,7 +81,7 @@ export class PlanningResolver {
     @Arg("id", () => Int) id: number,
     @Arg("data") data: UpdatePlanningInput
   ): Promise<Planning> {
-    const planning = await Planning.findOneBy({ planning_id: id });
+    const planning = await Planning.findOneBy({ id: id });
 
     if (!planning) {
       throw new NotFoundError({ message: "Planning not found" });
