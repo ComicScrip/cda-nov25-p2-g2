@@ -20,7 +20,7 @@ export enum baby_moodFormat {
   Bad = "bad",
   Neutral = "neutral",
   Good = "good",
-  NA= "na"
+  NA= "na"        // gestion d'une absence donc pas de mood = NA
 }
 
 registerEnumType(baby_moodFormat, {
