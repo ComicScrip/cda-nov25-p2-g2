@@ -10,6 +10,7 @@ import {
   Resolver,
 } from "type-graphql";
 import { endSession, getCurrentUser, startSession } from "../auth";
+import { Group } from "../entities/Group";
 import {
   ChangePasswordInput,
   CreateUserInput,
@@ -17,9 +18,8 @@ import {
   UpdateUserInput,
   User,
 } from "../entities/User";
-import { Group } from "../entities/Group";
-import type { GraphQLContext } from "../types";
 import { NotFoundError, UnauthenticatedError } from "../errors";
+import type { GraphQLContext } from "../types";
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();

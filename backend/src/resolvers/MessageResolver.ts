@@ -10,9 +10,9 @@ import {
   Resolver,
 } from "type-graphql";
 import { getCurrentUser } from "../auth";
-import { ForbiddenError, NotFoundError } from "../errors";
 import { Conversation } from "../entities/Conversation";
 import { Message } from "../entities/Message";
+import { ForbiddenError, NotFoundError } from "../errors";
 import type { GraphQLContext } from "../types";
 
 @InputType()
@@ -51,7 +51,9 @@ export default class MessageResolver {
       conversation.initiator.id !== currentUser.id &&
       conversation.participant.id !== currentUser.id
     ) {
-      throw new ForbiddenError({ message: "Vous n'avez pas accès à cette conversation" });
+      throw new ForbiddenError({
+        message: "Vous n'avez pas accès à cette conversation",
+      });
     }
 
     // Récupère tous les messages de la conversation du plus ancien au plus récent
@@ -89,7 +91,8 @@ export default class MessageResolver {
       conversation.participant.id !== currentUser.id
     ) {
       throw new ForbiddenError({
-        message: "Vous ne pouvez pas envoyer de message dans cette conversation",
+        message:
+          "Vous ne pouvez pas envoyer de message dans cette conversation",
       });
     }
 

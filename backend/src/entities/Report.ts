@@ -1,5 +1,11 @@
 import { IsBoolean, IsISO8601, IsUrl, Length } from "class-validator";
-import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -35,16 +41,20 @@ export class Report extends BaseEntity {
   @Column()
   date: Date;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: 'text' })
   staff_comment?: string | null;
 
   @Field()
-  @Column({ type: "enum", enum: "baby_moodFormat", default: baby_moodFormat.Neutral })
+  @Column({
+    type: "enum",
+    enum: baby_moodFormat,
+    default: baby_moodFormat.Neutral,
+  })
   baby_mood: baby_moodFormat;
 
-  @Field()
-  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @Column({ nullable: true, type: "text" })
   picture?: string | null;
 
   @Field(() => Child)
@@ -65,16 +75,16 @@ export class NewReportInput {
   @IsISO8601({}, { message: "La date est  de format incorrect" })
   date: Date;
 
-  @Field({ nullable: true })
-  @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
-  staff_comment?: string;
+  @Field(() => String, { nullable: true })
+  // @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
+  staff_comment?: string | null;
 
-  @Field({defaultValue: baby_moodFormat.Neutral})
+  @Field()
   baby_mood?: baby_moodFormat;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
-  picture?: string;
+  picture?: string | null;
 
   @Field(() => ObjectId, { nullable: true })
   child?: ObjectId;
@@ -90,16 +100,16 @@ export class UpdateReportInput {
   @IsISO8601({}, { message: "La date est  de format incorrect" })
   date?: Date;
 
-  @Field({ nullable: true })
-  @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
-  staff_comment?: string;
+  @Field(() => String, { nullable: true })
+  // @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
+  staff_comment?: string | null;
 
-  @Field({defaultValue: baby_moodFormat.Neutral})
+  @Field()
   baby_mood?: baby_moodFormat;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
-  picture?: string;
+  picture?: string | null;
 
   @Field(() => ObjectId, { nullable: true })
   child?: ObjectId;
