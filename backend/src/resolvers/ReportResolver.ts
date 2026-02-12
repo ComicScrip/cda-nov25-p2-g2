@@ -11,7 +11,7 @@ export default class ReportResolver {
     return Report.find({
       relations: [
         "child",
-        "child.representatives", // parents ou admin ou assistante mat
+        "representatives", // parents ou admin ou assistante mat
       ],
       order: { date: "DESC" },
     });
@@ -22,7 +22,7 @@ export default class ReportResolver {
   async report(@Arg("id") id: number) {
     return Report.findOne({
       where: { id },
-      relations: ["child", "child.representatives"],
+      relations: ["child", "representatives"],
     });
   }
 
@@ -34,18 +34,15 @@ export default class ReportResolver {
   ): Promise<Report> {
     const child = await Child.findOne({
       where: { id: data.child?.id},
-      relations: ["child", "child.representatives"],
+      relations: ["child", "representatives"],
     });
 
     if (!child) {
       throw new NotFoundError()
     }
-
     const newReport = new Report();
-    
     Object.assign(newReport, data);
     newReport.child = child;
-    newReport.date = new Date();
     await newReport.save();
     return newReport;
   }
@@ -59,7 +56,7 @@ export default class ReportResolver {
   
     const reportToUpdate = await Report.findOne({
       where: { id },
-      relations: ["child", "child.representatives"],
+      relations: ["child", "representatives"],
     });
   
     if (!reportToUpdate) throw new NotFoundError();
