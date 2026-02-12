@@ -46,7 +46,7 @@ async function main() {
     isPresent: false,
     date: new Date(),
     staff_comment: null,
-    baby_mood: baby_moodFormat.Neutral,
+    baby_mood: baby_moodFormat.NA,
     picture: null,
   }).save();
 
