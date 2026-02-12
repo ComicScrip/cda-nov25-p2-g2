@@ -46,7 +46,7 @@ async function main() {
     isPresent: false,
     date: new Date(),
     staff_comment: null,
-    baby_mood: null,
+    baby_mood: baby_moodFormat.Neutral,
     picture: null,
   }).save();
 
@@ -70,8 +70,6 @@ async function main() {
   
   await db.destroy();
   console.log("done !");
-
-  
 
 }
 

@@ -37,15 +37,15 @@ export class Report extends BaseEntity {
 
   @Field({ nullable: true })
   @Column({ nullable: true })
-  staff_comment: string;
+  staff_comment?: string | null;
 
-  @Field({ nullable: true })
-  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
+  @Field()
+  @Column({ type: "enum", enum: "baby_moodFormat", default: baby_moodFormat.Neutral })
   baby_mood: baby_moodFormat;
 
   @Field()
   @Column({ nullable: true })
-  picture: string;
+  picture?: string | null;
 
   @Field(() => Child)
   @ManyToOne(
@@ -67,15 +67,14 @@ export class NewReportInput {
 
   @Field({ nullable: true })
   @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
-  staff_comment: string;
+  staff_comment?: string;
 
-  @Field({ nullable: true })
-  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
-  baby_mood: baby_moodFormat;
+  @Field({defaultValue: baby_moodFormat.Neutral})
+  baby_mood?: baby_moodFormat;
 
   @Field({ nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
-  picture: string;
+  picture?: string;
 
   @Field(() => ObjectId, { nullable: true })
   child?: ObjectId;
@@ -95,9 +94,8 @@ export class UpdateReportInput {
   @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
   staff_comment?: string;
 
-  @Field({ nullable: true })
-  @Column({ type: "enum", enum: "baby_moodFormat", nullable: true })
-  baby_mood: baby_moodFormat;
+  @Field({defaultValue: baby_moodFormat.Neutral})
+  baby_mood?: baby_moodFormat;
 
   @Field({ nullable: true })
   @IsUrl({}, { message: "Le format attendu doit être une url" })
