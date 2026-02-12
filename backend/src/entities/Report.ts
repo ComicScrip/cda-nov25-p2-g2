@@ -1,4 +1,4 @@
-import { IsBoolean, IsISO8601, IsUrl, Length } from "class-validator";
+import { IsBoolean, IsISO8601, IsUrl } from "class-validator";
 import {
   Field,
   ID,
@@ -20,6 +20,7 @@ export enum baby_moodFormat {
   Bad = "bad",
   Neutral = "neutral",
   Good = "good",
+  NA= "na"
 }
 
 registerEnumType(baby_moodFormat, {
@@ -49,7 +50,7 @@ export class Report extends BaseEntity {
   @Column({
     type: "enum",
     enum: baby_moodFormat,
-    default: baby_moodFormat.Neutral,
+    default: baby_moodFormat.NA,
   })
   baby_mood: baby_moodFormat;
 
@@ -76,7 +77,6 @@ export class NewReportInput {
   date: Date;
 
   @Field(() => String, { nullable: true })
-  // @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
   staff_comment?: string | null;
 
   @Field()
@@ -101,7 +101,6 @@ export class UpdateReportInput {
   date?: Date;
 
   @Field(() => String, { nullable: true })
-  // @Length(2, 150, { message: "Le nom doit contenir entre 2 et 150 caractères" })
   staff_comment?: string | null;
 
   @Field()
