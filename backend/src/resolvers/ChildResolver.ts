@@ -6,7 +6,9 @@ import { NotFoundError } from "../errors";
 export default class ChildResolver {
   @Query(() => [Child])
   async children() {
-    return await Child.find();
+    return await Child.find({
+      relations: ["group", "reports", "parents"]
+    });
   }
 
   @Query(() => Child)
