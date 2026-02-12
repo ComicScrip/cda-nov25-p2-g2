@@ -1,10 +1,11 @@
-import { IsEmail, IsStrongPassword, IsOptional, Length } from "class-validator";
+import { IsEmail, IsOptional, IsStrongPassword, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
@@ -60,11 +61,15 @@ export class User extends BaseEntity {
   role: Role;
 
   @Field(() => Group, { nullable: true })
-  @ManyToOne(() => Group, group => group.staff)
-  group: Group; 
+  @ManyToOne(
+    () => Group,
+    (group) => group.staff,
+  )
+  @JoinColumn({ name: "group_id" })
+  group: Group | null;
 
   @Field(() => [Child], { nullable: true })
-  @JoinTable({name: "representatives"})
+  @JoinTable({ name: "representatives" })
   @ManyToMany(
     () => Child,
     (child) => child.parents,

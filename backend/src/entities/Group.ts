@@ -1,14 +1,14 @@
-import { Field, ID, ObjectType, Int } from "type-graphql";
+import { Field, ID, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from "typeorm";
 
 import { Child } from "./Child";
-import { Planning } from "./Planning"; 
+import { Planning } from "./Planning";
 import { User } from "./User";
 
 @ObjectType()
@@ -28,11 +28,14 @@ export class Group extends BaseEntity {
 
   // Un groupe peut avoir plusieurs plannings
   @Field(() => [Planning], { nullable: true })
-  @OneToMany(() => Planning, (planning) => planning.group)
+  @OneToMany(
+    () => Planning,
+    (planning) => planning.group,
+  )
   plannings: Planning[];
-    planning: any;
+  planning: any;
 
-      @Field(() => [Child], { nullable: true })
+  @Field(() => [Child], { nullable: true })
   @OneToMany(
     () => Child,
     (child) => child.group,
@@ -40,6 +43,9 @@ export class Group extends BaseEntity {
   children: Child[];
 
   @Field(() => [User])
-  @OneToMany(() => User, user => user.group)
-  staff: User[]
+  @OneToMany(
+    () => User,
+    (user) => user.group,
+  )
+  staff: User[];
 }

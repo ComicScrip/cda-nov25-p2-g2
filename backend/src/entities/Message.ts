@@ -7,8 +7,8 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { User } from "./User";
 import { Conversation } from "./Conversation";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -30,6 +30,9 @@ export class Message extends BaseEntity {
   author: User;
 
   @Field(() => Conversation)
-  @ManyToOne(() => Conversation, (conversation) => conversation.messages)
+  @ManyToOne(
+    () => Conversation,
+    (conversation) => conversation.messages,
+  )
   conversation: Conversation;
 }

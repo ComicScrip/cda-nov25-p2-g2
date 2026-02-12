@@ -1,6 +1,14 @@
-import { Resolver, Query, Mutation, Arg, Int, InputType, Field } from "type-graphql";
-import { Planning } from "../entities/Planning";
+import {
+  Arg,
+  Field,
+  InputType,
+  Int,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import { Group } from "../entities/Group";
+import { Planning } from "../entities/Planning";
 import { NotFoundError } from "../errors"; // Ajuste le chemin
 
 @InputType()
@@ -38,7 +46,6 @@ class UpdatePlanningInput {
 
 @Resolver()
 export class PlanningResolver {
-
   // READ
   @Query(() => [Planning])
   async getAllPlannings(): Promise<Planning[]> {
@@ -47,29 +54,27 @@ export class PlanningResolver {
 
   @Query(() => Planning)
   async getPlanningById(@Arg("id", () => Int) id: number): Promise<Planning> {
-    const planning = await Planning.findOne({ 
-      where: { id: id }, 
-      relations: ["group"] 
+    const planning = await Planning.findOne({
+      where: { id: id },
+      relations: ["group"],
     });
-    
+
     if (!planning) throw new NotFoundError();
     return planning;
   }
 
   // CREATE
   @Mutation(() => Planning)
-  async createPlanning(
-    @Arg("data") data: PlanningInput
-  ): Promise<Planning> {
+  async createPlanning(@Arg("data") data: PlanningInput): Promise<Planning> {
     const group = await Group.findOneBy({ id: data.groupId });
-    
+
     if (!group) {
       throw new NotFoundError({ message: "Group not found for this planning" });
     }
 
     const newPlanning = Planning.create({
       ...data,
-      group: group
+      group: group,
     });
 
     return await newPlanning.save();
@@ -79,7 +84,7 @@ export class PlanningResolver {
   @Mutation(() => Planning)
   async updatePlanning(
     @Arg("id", () => Int) id: number,
-    @Arg("data") data: UpdatePlanningInput
+    @Arg("data") data: UpdatePlanningInput,
   ): Promise<Planning> {
     const planning = await Planning.findOneBy({ id: id });
 
