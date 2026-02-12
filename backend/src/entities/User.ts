@@ -1,15 +1,15 @@
-import { IsEmail, IsStrongPassword, IsOptional, Length } from "class-validator";
+import { IsEmail, IsOptional, IsStrongPassword, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
-  JoinColumn,
 } from "typeorm";
 import { Child } from "./Child";
 import { Group } from "./Group";
