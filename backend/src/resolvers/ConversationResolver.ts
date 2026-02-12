@@ -1,8 +1,8 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { getCurrentUser } from "../auth";
-import { ForbiddenError, NotFoundError } from "../errors";
 import { Conversation } from "../entities/Conversation";
 import { User } from "../entities/User";
+import { ForbiddenError, NotFoundError } from "../errors";
 import type { GraphQLContext } from "../types";
 
 @Resolver()
@@ -50,7 +50,9 @@ export default class ConversationResolver {
       conversation.initiator.id !== currentUser.id &&
       conversation.participant.id !== currentUser.id
     ) {
-      throw new ForbiddenError({ message: "Vous n'avez pas accès à cette conversation" });
+      throw new ForbiddenError({
+        message: "Vous n'avez pas accès à cette conversation",
+      });
     }
 
     return conversation;

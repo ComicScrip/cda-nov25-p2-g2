@@ -10,8 +10,7 @@ export default class ReportResolver {
   async reports() {
     return Report.find({
       relations: [
-        "child",
-        "child.representatives", // parents ou admin ou assistante mat
+        "child", // parents ou admin ou assistante mat
       ],
       order: { date: "DESC" },
     });
@@ -22,7 +21,7 @@ export default class ReportResolver {
   async report(@Arg("id") id: number) {
     return Report.findOne({
       where: { id },
-      relations: ["child", "child.representatives"],
+      relations: ["child"],
     });
   }
 
@@ -30,22 +29,19 @@ export default class ReportResolver {
   @Mutation(() => Report)
   async createReport(
     @Arg("data", () => NewReportInput, { validate: true })
-    data: NewReportInput
+    data: NewReportInput,
   ): Promise<Report> {
     const child = await Child.findOne({
-      where: { id: data.child},
-      relations: ["child", "child.representatives"],
+      where: { id: data.child?.id },
+      relations: ["child"],
     });
 
     if (!child) {
-      throw new NotFoundError()
+      throw new NotFoundError();
     }
-
     const newReport = new Report();
-    
     Object.assign(newReport, data);
     newReport.child = child;
-    newReport.date = new Date();
     await newReport.save();
     return newReport;
   }
@@ -54,19 +50,19 @@ export default class ReportResolver {
   @Mutation(() => Report)
   async updateReport(
     @Arg("id", () => Int) id: number,
-    @Arg("data", () => UpdateReportInput, { validate: true }) data: UpdateReportInput
+    @Arg("data", () => UpdateReportInput, { validate: true })
+    data: UpdateReportInput,
   ): Promise<Report> {
-  
     const reportToUpdate = await Report.findOne({
       where: { id },
-      relations: ["child", "child.representatives"],
+      relations: ["child"],
     });
-  
+
     if (!reportToUpdate) throw new NotFoundError();
-  
+
     Object.assign(reportToUpdate, data);
     await reportToUpdate.save();
-  
+
     return reportToUpdate;
   }
 }

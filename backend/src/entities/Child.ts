@@ -1,11 +1,19 @@
-import { IsISO8601, IsUrl, Length } from "class-validator";
+import { IsDate, IsUrl, Length } from "class-validator";
 import { Field, InputType, Int, ObjectType } from "type-graphql";
-import { BaseEntity, Column, CreateDateColumn, Entity, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "./User";
-import { Report } from "./Report";
-import { Group } from "./Group";
+import {
+  BaseEntity,
+  Column,
+  CreateDateColumn,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 import { ObjectId } from "../types";
-
+import { Group } from "./Group";
+import { Report } from "./Report";
+import { User } from "./User";
 
 @ObjectType()
 @Entity()
@@ -30,24 +38,27 @@ export class Child extends BaseEntity {
   @Column({ type: "text" })
   picture: string;
 
-  @Field({nullable: true}) 
+  @Field(() => String, {nullable: true}) 
   @Column({type: "text", nullable: true}) 
-  healthRecord: string
+  healthRecord: string|null
 
   // Child relations
   @Field(() => Group)
-  @ManyToOne(() => Group, group => group.children)
-  group: Group;  // FK
+  @ManyToOne(
+    () => Group,
+    (group) => group.children,
+  )
+  group: Group; // FK
 
   @Field(() => [Report])
-  @OneToMany(
-    () => Report,
-    (report) => report.child,
-  )
+  @OneToMany(() => Report, report => report.child)
   reports: Report[];
 
   @Field(() => [User])
-  @ManyToMany(() => User, user => user.children)
+  @ManyToMany(
+    () => User,
+    (user) => user.children,
+  )
   parents: User[];
 }
 
@@ -64,7 +75,7 @@ export class NewChildInput {
   lastName: string;
 
   @Field()
-  @IsISO8601({}, { message: "La date est  de format incorrect" })
+  @IsDate({ message: "La date est  de format incorrect" })
   birthDate: Date;
 
   @Field()
@@ -94,7 +105,7 @@ export class UpdateChildInput {
   lastName?: string;
 
   @Field({ nullable: true })
-  @IsISO8601({}, { message: "La date est  de format incorrect" })
+  @IsDate({ message: "La date est  de format incorrect" })
   birthDate?: Date;
 
   @Field({ nullable: true })
