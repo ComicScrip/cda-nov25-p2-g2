@@ -9,6 +9,9 @@ jobs:
   client-tests:
     uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/test-frontend.yml@main
 
+    server-tests:
+      uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/test-backend.yml@main
+
   build-and-push-server:
     uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/build-backend.yml@main
     secrets:
