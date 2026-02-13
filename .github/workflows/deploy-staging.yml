@@ -6,11 +6,13 @@ on:
   workflow_dispatch:
 
 jobs:
+
   client-tests:
     uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/test-frontend.yml@dev
+    
   server-tests:
     uses: ComicScrip/cda-nov25-p2-g2/.github/workflows/test-backend.yml@dev
-    
+
   build-and-push-server:
     needs:
       - server-tests
