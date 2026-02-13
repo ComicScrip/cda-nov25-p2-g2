@@ -12,18 +12,18 @@ jobs:
      run:
       working-directory: ./backend
 
-  steps:
-    - name: Get the code
-      uses: actions/checkout@v4
-    - name: Install NodeJS
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-    - name: Make envfile
-      run: cp .env.example .env
-    - name: Install deps
-      run: npm ci
-    - name: Start test DB
-      run: npm run testDB
-    - name: Run Tests
-      run: npm run test
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+      - name: Install NodeJS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Make envfile
+        run: cp .env.example .env
+      - name: Install deps
+        run: npm ci
+      - name: Start test DB
+        run: npm run testDB
+      - name: Run Tests
+        run: npm run test
