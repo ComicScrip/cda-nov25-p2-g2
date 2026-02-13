@@ -11,7 +11,7 @@ on:
           working-directory: ./backend
 
       steps:
-        - uses: Get the code
+        - name: Get the code
           uses: actions/checkout@v4
         - name: Install NodeJS
           uses: actions/setup-node@v4
@@ -21,7 +21,7 @@ on:
           run: cp .env.example .env
         - name: Install deps
           run: npm ci
-          name: Start test database
+        - name: Start test DB
           run: npm run testDB
         - name: Run Jest Tests
           run: npm run test
