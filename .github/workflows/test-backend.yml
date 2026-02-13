@@ -1,0 +1,27 @@
+name: "test backend"
+
+on:
+  pull_request:
+    
+    jobs:
+      tests-server:
+        runs-on: ubuntu-latest
+        defaults:
+          run:
+          working-directory: ./backend
+
+      steps:
+        - uses: Get the code
+          uses: actions/checkout@v4
+        - name: Install NodeJS
+          uses: actions/setup-node@v4
+          with:
+            node-version: 20
+        - name: Make envfile
+          run: cp .env.example .env
+        - name: Install deps
+          run: npm ci
+          name: Start test database
+          run: npm run testDB
+        - name: Run Jest Tests
+          run: npm run test
