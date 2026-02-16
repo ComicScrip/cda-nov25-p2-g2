@@ -30,3 +30,17 @@ body,
 main {
   flex-grow: 1;
 }
+
+.home {
+  background-image: url("/chateau.png");
+  background-size: cover;
+  background-position-x: 48%;
+
+  @variant sm { /* test pour responsive tailwind sur cette classe */
+    background-position-y: 80%;
+  }
+}
+
+
+
+
