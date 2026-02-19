@@ -1,6 +1,6 @@
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
-import { type MeQuery, useProfileQuery } from "@/graphql/generated/schema";
+import { type ProfileQuery, useProfileQuery } from "@/graphql/generated/schema";
 
 type Role = "admin" | "staff" | "parent";
 
