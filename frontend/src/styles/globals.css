@@ -35,12 +35,32 @@ main {
   background-image: url("/chateau.png");
   background-size: cover;
   background-position-x: 48%;
-
-  @variant sm { /* test pour responsive tailwind sur cette classe */
-    background-position-y: 80%;
-  }
 }
 
+@utility home-large {
+  background-position-y: 80%;
+}
 
+@utility staff-large {
+  background-position-y: 70%;
+  background-position-x: 50%;
+  background-clip: ;
+  
+}
 
+.group1 {
+  background-image: url("/orange.png");
+  background-size: cover;
+  
+}
+
+.group2 {
+  background-image: url("/vert.png");
+  background-size: cover;
+}
+
+.group3 {
+  background-image: url("/violet.png");
+  background-size: cover;
+}
 

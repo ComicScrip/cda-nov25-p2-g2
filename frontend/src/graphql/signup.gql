@@ -1,7 +1,9 @@
-mutation Signup($data: SignupInput!) {
-  signup(data: $data) {
-    id
-    email
-    createdAt
-  }
-}
+# mutation Signup($data: SignupInput!) {
+#   signup(data: $data) {
+#     id
+#     email
+#     createdAt
+#   }
+# }
+
+# on l'enleve car pas de création de user fait pour un utilisateur : tout est fait par l'admin
