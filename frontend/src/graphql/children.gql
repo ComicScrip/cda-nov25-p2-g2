@@ -1,0 +1,16 @@
+query children {
+  me {
+    id
+    children {
+      id
+      firstName
+      lastName
+      birthDate
+      picture
+      healthRecord
+      group {
+        name
+      }
+    }
+  }
+}

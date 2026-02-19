@@ -1,0 +1,10 @@
+query childById($id: Int!) {
+  child(id: $id) {
+    id
+    firstName
+    lastName
+    birthDate
+    picture
+    group { name }
+  }
+}

@@ -18,6 +18,7 @@ const ProfilPage = () => {
           <header className="bb-header">
             <img src="/babyboardlogo.png" alt="BabyBoard" className="bb-logo-big" />
             {/* Avatar en haut à droite (optionnel) */}
+            {/** biome-ignore lint/performance/noImgElement: <explanation> */}
             <img
               src={user?.avatar || "/avatarfille.png"}
               alt="Profil"
@@ -34,6 +35,7 @@ const ProfilPage = () => {
               <div className="bb-avatar-center-container">
                 <div className="bb-avatar-outline">
                   {/* Avatar principal au centre */}
+                  {/** biome-ignore lint/performance/noImgElement: <explanation> */}
                   <img
                     src={user?.avatar || "/avatarfille.png"}
                     alt="User"
@@ -41,6 +43,7 @@ const ProfilPage = () => {
                   />
                   <Link href="/profil/edit">
                     <div className="bb-edit-circle">
+                      {/** biome-ignore lint/performance/noImgElement: <explanation> */}
                       <img src="/modifier.png" alt="Edit" />
                     </div>
                   </Link>
