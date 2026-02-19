@@ -1,7 +1,15 @@
-query profile {
+query Profile {
   me {
     id
     email
+<<<<<<< HEAD
+=======
+    first_name
+    last_name
+    phone
+>>>>>>> 9e3fd2165935d6cb734cb761ade27cbb842aa976
     role
+    creation_date
+    avatar
   }
 }
