@@ -547,7 +547,6 @@ export const ProfileDocument = gql`
     query Profile {
   me {
     id
-    role
     first_name
     last_name
     avatar
@@ -567,11 +566,6 @@ export const ProfileDocument = gql`
         lastName
         picture
       }
-    }
-    avatar
-    group {
-      id
-      name
     }
   }
 }
