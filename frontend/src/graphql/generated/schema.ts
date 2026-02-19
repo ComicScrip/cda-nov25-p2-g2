@@ -1,103 +1,454 @@
 // @ts-nocheck
-import { gql } from "@apollo/client";
-import * as ApolloReactCommon from "@apollo/client/react";
-import * as ApolloReactHooks from "@apollo/client/react";
+import { gql } from '@apollo/client';
+import * as ApolloReactCommon from '@apollo/client/react';
+import * as ApolloReactHooks from '@apollo/client/react';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = {
-  [_ in K]?: never;
-};
-export type Incremental<T> =
-  | T
-  | { [P in keyof T]?: P extends " $fragmentName" | "__typename" ? T[P] : never };
+export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: { input: string; output: string };
-  String: { input: string; output: string };
-  Boolean: { input: boolean; output: boolean };
-  Int: { input: number; output: number };
-  Float: { input: number; output: number };
-  DateTimeISO: { input: any; output: any };
+  ID: { input: string; output: string; }
+  String: { input: string; output: string; }
+  Boolean: { input: boolean; output: boolean; }
+  Int: { input: number; output: number; }
+  Float: { input: number; output: number; }
+  DateTimeISO: { input: any; output: any; }
+};
+
+export type ChangePasswordInput = {
+  currentPassword: Scalars['String']['input'];
+  newPassword: Scalars['String']['input'];
+};
+
+export type Child = {
+  __typename?: 'Child';
+  birthDate: Scalars['DateTimeISO']['output'];
+  firstName: Scalars['String']['output'];
+  group: Group;
+  healthRecord?: Maybe<Scalars['String']['output']>;
+  id: Scalars['Int']['output'];
+  lastName: Scalars['String']['output'];
+  parents: Array<User>;
+  picture: Scalars['String']['output'];
+  reports: Array<Report>;
+};
+
+export type Conversation = {
+  __typename?: 'Conversation';
+  creationDate: Scalars['DateTimeISO']['output'];
+  id: Scalars['Int']['output'];
+  initiator: User;
+  messages: Array<Message>;
+  participant: User;
+};
+
+export type CreateMessageInput = {
+  content: Scalars['String']['input'];
+  conversationId: Scalars['Int']['input'];
+};
+
+export type CreateUserInput = {
+  email: Scalars['String']['input'];
+  first_name: Scalars['String']['input'];
+  group_id?: InputMaybe<Scalars['Int']['input']>;
+  last_name: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+  phone: Scalars['String']['input'];
+  role: Scalars['String']['input'];
+};
+
+export type Group = {
+  __typename?: 'Group';
+  capacity: Scalars['Int']['output'];
+  children?: Maybe<Array<Child>>;
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  plannings?: Maybe<Array<Planning>>;
+  staff: Array<User>;
 };
 
 export type LoginInput = {
-  email: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+  email: Scalars['String']['input'];
+  password: Scalars['String']['input'];
+};
+
+export type Message = {
+  __typename?: 'Message';
+  author: User;
+  content: Scalars['String']['output'];
+  conversation: Conversation;
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['Int']['output'];
 };
 
 export type Mutation = {
-  __typename?: "Mutation";
-  login: Scalars["String"]["output"];
-  logout: Scalars["Boolean"]["output"];
-  signup: User;
+  __typename?: 'Mutation';
+  changePassword: Scalars['Boolean']['output'];
+  createChild: Child;
+  createConversation: Conversation;
+  createGroup: Group;
+  createMessage: Message;
+  createPlanning: Planning;
+  createReport: Report;
+  createUser: User;
+  deleteChild: Scalars['String']['output'];
+  deleteGroup: Scalars['Boolean']['output'];
+  deletePlanning: Scalars['Boolean']['output'];
+  deleteUser: Scalars['Boolean']['output'];
+  login: Scalars['String']['output'];
+  logout: Scalars['Boolean']['output'];
+  updateAd: Child;
+  updateGroup: Group;
+  updatePlanning: Planning;
+  updateReport: Report;
+  updateUser: User;
 };
+
+
+export type MutationChangePasswordArgs = {
+  data: ChangePasswordInput;
+};
+
+
+export type MutationCreateChildArgs = {
+  data: NewChildInput;
+};
+
+
+export type MutationCreateConversationArgs = {
+  participantId: Scalars['Int']['input'];
+};
+
+
+export type MutationCreateGroupArgs = {
+  capacity: Scalars['Int']['input'];
+  id?: InputMaybe<Scalars['Int']['input']>;
+  name: Scalars['String']['input'];
+};
+
+
+export type MutationCreateMessageArgs = {
+  data: CreateMessageInput;
+};
+
+
+export type MutationCreatePlanningArgs = {
+  data: PlanningInput;
+};
+
+
+export type MutationCreateReportArgs = {
+  data: NewReportInput;
+};
+
+
+export type MutationCreateUserArgs = {
+  data: CreateUserInput;
+};
+
+
+export type MutationDeleteChildArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationDeleteGroupArgs = {
+  group_id: Scalars['Int']['input'];
+};
+
+
+export type MutationDeletePlanningArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationDeleteUserArgs = {
+  id: Scalars['Int']['input'];
+};
+
 
 export type MutationLoginArgs = {
   data: LoginInput;
 };
 
-export type MutationSignupArgs = {
-  data: SignupInput;
+
+export type MutationUpdateAdArgs = {
+  data: UpdateChildInput;
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationUpdateGroupArgs = {
+  capacity?: InputMaybe<Scalars['Float']['input']>;
+  id: Scalars['Int']['input'];
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type MutationUpdatePlanningArgs = {
+  data: UpdatePlanningInput;
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationUpdateReportArgs = {
+  data: UpdateReportInput;
+  id: Scalars['Int']['input'];
+};
+
+
+export type MutationUpdateUserArgs = {
+  data: UpdateUserInput;
+};
+
+export type NewChildInput = {
+  birthDate: Scalars['DateTimeISO']['input'];
+  firstName: Scalars['String']['input'];
+  group: ObjectId;
+  healthRecord?: InputMaybe<Scalars['String']['input']>;
+  lastName: Scalars['String']['input'];
+  parents: Array<ObjectId>;
+  picture: Scalars['String']['input'];
+};
+
+export type NewReportInput = {
+  baby_mood: Scalars['String']['input'];
+  child?: InputMaybe<ObjectId>;
+  date: Scalars['DateTimeISO']['input'];
+  isPresent: Scalars['Boolean']['input'];
+  picture?: InputMaybe<Scalars['String']['input']>;
+  staff_comment?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type ObjectId = {
+  id: Scalars['Int']['input'];
+};
+
+export type Planning = {
+  __typename?: 'Planning';
+  afternoon_activities?: Maybe<Scalars['String']['output']>;
+  afternoon_nap?: Maybe<Scalars['String']['output']>;
+  date: Scalars['DateTimeISO']['output'];
+  group: Group;
+  id: Scalars['ID']['output'];
+  meal?: Maybe<Scalars['String']['output']>;
+  morning_activities?: Maybe<Scalars['String']['output']>;
+  morning_nap?: Maybe<Scalars['String']['output']>;
+  snack?: Maybe<Scalars['String']['output']>;
+};
+
+export type PlanningInput = {
+  afternoon_nap: Scalars['String']['input'];
+  date: Scalars['DateTimeISO']['input'];
+  groupId: Scalars['Int']['input'];
+  meal: Scalars['String']['input'];
+  morning_nap: Scalars['String']['input'];
 };
 
 export type Query = {
-  __typename?: "Query";
+  __typename?: 'Query';
+  child: Child;
+  children: Array<Child>;
+  conversation?: Maybe<Conversation>;
+  getAllGroups: Array<Group>;
+  getAllPlannings: Array<Planning>;
+  getGroupById?: Maybe<Group>;
+  getPlanningById: Planning;
   me?: Maybe<User>;
+  messagesFromConversation: Array<Message>;
+  myConversations: Array<Conversation>;
+  report?: Maybe<Report>;
+  reports: Array<Report>;
   users: Array<User>;
 };
 
-export type SignupInput = {
-  email: Scalars["String"]["input"];
-  password: Scalars["String"]["input"];
+
+export type QueryChildArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryConversationArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryGetAllGroupsArgs = {
+  skip?: Scalars['Int']['input'];
+  take?: Scalars['Int']['input'];
+};
+
+
+export type QueryGetGroupByIdArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryGetPlanningByIdArgs = {
+  id: Scalars['Int']['input'];
+};
+
+
+export type QueryMessagesFromConversationArgs = {
+  conversationId: Scalars['Int']['input'];
+};
+
+
+export type QueryReportArgs = {
+  id: Scalars['Float']['input'];
+};
+
+export type Report = {
+  __typename?: 'Report';
+  baby_mood: Scalars['String']['output'];
+  child: Child;
+  date: Scalars['DateTimeISO']['output'];
+  id: Scalars['ID']['output'];
+  isPresent: Scalars['Boolean']['output'];
+  picture?: Maybe<Scalars['String']['output']>;
+  staff_comment?: Maybe<Scalars['String']['output']>;
+};
+
+export type UpdateChildInput = {
+  birthDate?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  firstName?: InputMaybe<Scalars['String']['input']>;
+  group?: InputMaybe<ObjectId>;
+  healthRecord?: InputMaybe<Scalars['String']['input']>;
+  lastName?: InputMaybe<Scalars['String']['input']>;
+  parents?: InputMaybe<Array<ObjectId>>;
+  picture?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdatePlanningInput = {
+  afternoon_nap?: InputMaybe<Scalars['String']['input']>;
+  date?: InputMaybe<Scalars['DateTimeISO']['input']>;
+  meal?: InputMaybe<Scalars['String']['input']>;
+  morning_nap?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateReportInput = {
+  baby_mood: Scalars['String']['input'];
+  child?: InputMaybe<ObjectId>;
+  date: Scalars['DateTimeISO']['input'];
+  isPresent: Scalars['Boolean']['input'];
+  picture?: InputMaybe<Scalars['String']['input']>;
+  staff_comment?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type UpdateUserInput = {
+  avatar?: InputMaybe<Scalars['String']['input']>;
+  email?: InputMaybe<Scalars['String']['input']>;
+  first_name?: InputMaybe<Scalars['String']['input']>;
+  group_id?: InputMaybe<Scalars['Int']['input']>;
+  id: Scalars['Int']['input'];
+  last_name?: InputMaybe<Scalars['String']['input']>;
+  phone?: InputMaybe<Scalars['String']['input']>;
+  role?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type User = {
-  __typename?: "User";
-  createdAt: Scalars["DateTimeISO"]["output"];
-  email: Scalars["String"]["output"];
-  id: Scalars["Int"]["output"];
-  role: Scalars["String"]["output"];
+  __typename?: 'User';
+  avatar?: Maybe<Scalars['String']['output']>;
+  children?: Maybe<Array<Child>>;
+  creation_date: Scalars['DateTimeISO']['output'];
+  email: Scalars['String']['output'];
+  first_name: Scalars['String']['output'];
+  group?: Maybe<Group>;
+  id: Scalars['Int']['output'];
+  last_name: Scalars['String']['output'];
+  phone: Scalars['String']['output'];
+  role: Scalars['String']['output'];
 };
+
+export type ChildrenQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ChildrenQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, birthDate: any, picture: string, healthRecord?: string | null, group: { __typename?: 'Group', name: string } }> | null } | null };
 
 export type LoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
 
-export type LoginMutation = { __typename?: "Mutation"; login: string };
 
-export type LogoutMutationVariables = Exact<{ [key: string]: never }>;
+export type LoginMutation = { __typename?: 'Mutation', login: string };
 
-export type LogoutMutation = { __typename?: "Mutation"; logout: boolean };
+export type LogoutMutationVariables = Exact<{ [key: string]: never; }>;
 
-export type ProfileQueryVariables = Exact<{ [key: string]: never }>;
 
-export type ProfileQuery = {
-  __typename?: "Query";
-  me?: { __typename?: "User"; id: number; email: string; createdAt: any; role: string } | null;
-};
+export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 
-export type SignupMutationVariables = Exact<{
-  data: SignupInput;
-}>;
+export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
-export type SignupMutation = {
-  __typename?: "Mutation";
-  signup: { __typename?: "User"; id: number; email: string; createdAt: any };
-};
 
+export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, email: string, role: string } | null };
+
+export type UserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, email: string, role: string, first_name: string, last_name: string, phone: string, avatar?: string | null, creation_date: any, group?: { __typename?: 'Group', id: string, name: string } | null } | null };
+
+
+export const ChildrenDocument = gql`
+    query children {
+  me {
+    id
+    children {
+      id
+      firstName
+      lastName
+      birthDate
+      picture
+      healthRecord
+      group {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useChildrenQuery__
+ *
+ * To run a query within a React component, call `useChildrenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChildrenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChildrenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useChildrenQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+      }
+export function useChildrenLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+        }
+export function useChildrenSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+        }
+export type ChildrenQueryHookResult = ReturnType<typeof useChildrenQuery>;
+export type ChildrenLazyQueryHookResult = ReturnType<typeof useChildrenLazyQuery>;
+export type ChildrenSuspenseQueryHookResult = ReturnType<typeof useChildrenSuspenseQuery>;
+export type ChildrenQueryResult = ApolloReactCommon.QueryResult<ChildrenQuery, ChildrenQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($data: LoginInput!) {
   login(data: $data)
 }
     `;
-export type LoginMutationFn = ApolloReactCommon.MutationFunction<
-  LoginMutation,
-  LoginMutationVariables
->;
+export type LoginMutationFn = ApolloReactCommon.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
  * __useLoginMutation__
@@ -116,30 +467,19 @@ export type LoginMutationFn = ApolloReactCommon.MutationFunction<
  *   },
  * });
  */
-export function useLoginMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<LoginMutation, LoginMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useMutation<LoginMutation, LoginMutationVariables>(
-    LoginDocument,
-    options,
-  );
-}
+export function useLoginMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LoginMutation, LoginMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<LoginMutation, LoginMutationVariables>(LoginDocument, options);
+      }
 export type LoginMutationHookResult = ReturnType<typeof useLoginMutation>;
 export type LoginMutationResult = ApolloReactCommon.MutationResult<LoginMutation>;
-export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  LoginMutation,
-  LoginMutationVariables
->;
+export type LoginMutationOptions = ApolloReactCommon.BaseMutationOptions<LoginMutation, LoginMutationVariables>;
 export const LogoutDocument = gql`
     mutation Logout {
   logout
 }
     `;
-export type LogoutMutationFn = ApolloReactCommon.MutationFunction<
-  LogoutMutation,
-  LogoutMutationVariables
->;
+export type LogoutMutationFn = ApolloReactCommon.MutationFunction<LogoutMutation, LogoutMutationVariables>;
 
 /**
  * __useLogoutMutation__
@@ -157,27 +497,18 @@ export type LogoutMutationFn = ApolloReactCommon.MutationFunction<
  *   },
  * });
  */
-export function useLogoutMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<LogoutMutation, LogoutMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useMutation<LogoutMutation, LogoutMutationVariables>(
-    LogoutDocument,
-    options,
-  );
-}
+export function useLogoutMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LogoutMutation, LogoutMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useMutation<LogoutMutation, LogoutMutationVariables>(LogoutDocument, options);
+      }
 export type LogoutMutationHookResult = ReturnType<typeof useLogoutMutation>;
 export type LogoutMutationResult = ApolloReactCommon.MutationResult<LogoutMutation>;
-export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  LogoutMutation,
-  LogoutMutationVariables
->;
+export type LogoutMutationOptions = ApolloReactCommon.BaseMutationOptions<LogoutMutation, LogoutMutationVariables>;
 export const ProfileDocument = gql`
     query profile {
   me {
     id
     email
-    createdAt
     role
   }
 }
@@ -198,82 +529,69 @@ export const ProfileDocument = gql`
  *   },
  * });
  */
-export function useProfileQuery(
-  baseOptions?: ApolloReactHooks.QueryHookOptions<ProfileQuery, ProfileQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
-}
-export function useProfileLazyQuery(
-  baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProfileQuery, ProfileQueryVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useLazyQuery<ProfileQuery, ProfileQueryVariables>(
-    ProfileDocument,
-    options,
-  );
-}
-export function useProfileSuspenseQuery(
-  baseOptions?:
-    | ApolloReactHooks.SkipToken
-    | ApolloReactHooks.SuspenseQueryHookOptions<ProfileQuery, ProfileQueryVariables>,
-) {
-  const options =
-    baseOptions === ApolloReactHooks.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useSuspenseQuery<ProfileQuery, ProfileQueryVariables>(
-    ProfileDocument,
-    options,
-  );
-}
+export function useProfileQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ProfileQuery, ProfileQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
+      }
+export function useProfileLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ProfileQuery, ProfileQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
+        }
+export function useProfileSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ProfileQuery, ProfileQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<ProfileQuery, ProfileQueryVariables>(ProfileDocument, options);
+        }
 export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileSuspenseQueryHookResult = ReturnType<typeof useProfileSuspenseQuery>;
 export type ProfileQueryResult = ApolloReactCommon.QueryResult<ProfileQuery, ProfileQueryVariables>;
-export const SignupDocument = gql`
-    mutation Signup($data: SignupInput!) {
-  signup(data: $data) {
+export const UserDocument = gql`
+    query user {
+  me {
     id
     email
-    createdAt
+    role
+    first_name
+    last_name
+    phone
+    avatar
+    creation_date
+    group {
+      id
+      name
+    }
   }
 }
     `;
-export type SignupMutationFn = ApolloReactCommon.MutationFunction<
-  SignupMutation,
-  SignupMutationVariables
->;
 
 /**
- * __useSignupMutation__
+ * __useUserQuery__
  *
- * To run a mutation, you first call `useSignupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSignupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
  *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const [signupMutation, { data, loading, error }] = useSignupMutation({
+ * const { data, loading, error } = useUserQuery({
  *   variables: {
- *      data: // value for 'data'
  *   },
  * });
  */
-export function useSignupMutation(
-  baseOptions?: ApolloReactHooks.MutationHookOptions<SignupMutation, SignupMutationVariables>,
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return ApolloReactHooks.useMutation<SignupMutation, SignupMutationVariables>(
-    SignupDocument,
-    options,
-  );
-}
-export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
-export type SignupMutationResult = ApolloReactCommon.MutationResult<SignupMutation>;
-export type SignupMutationOptions = ApolloReactCommon.BaseMutationOptions<
-  SignupMutation,
-  SignupMutationVariables
->;
+export function useUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+      }
+export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export function useUserSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
+export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;
