@@ -394,11 +394,7 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, email: string, first_name: string, last_name: string, phone: string, role: string, creation_date: any, avatar?: string | null } | null };
-
-export type SignupMutationVariables = Exact<{
-  data: CreateUserInput;
-}>;
+export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, first_name: string, last_name: string, avatar?: string | null, creation_date: any, email: string, phone: string, role: string, children?: Array<{ __typename?: 'Child', id: number }> | null, group?: { __typename?: 'Group', id: string, name: string, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, picture: string }> | null } | null } | null };
 
 
 export type SignupMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: number, email: string } };
@@ -537,13 +533,26 @@ export const ProfileDocument = gql`
     query Profile {
   me {
     id
-    email
     first_name
     last_name
+    avatar
+    creation_date
+    email
     phone
     role
-    creation_date
-    avatar
+    children {
+      id
+    }
+    group {
+      id
+      name
+      children {
+        id
+        firstName
+        lastName
+        picture
+      }
+    }
   }
 }
     `;
@@ -579,37 +588,3 @@ export type ProfileQueryHookResult = ReturnType<typeof useProfileQuery>;
 export type ProfileLazyQueryHookResult = ReturnType<typeof useProfileLazyQuery>;
 export type ProfileSuspenseQueryHookResult = ReturnType<typeof useProfileSuspenseQuery>;
 export type ProfileQueryResult = ApolloReactCommon.QueryResult<ProfileQuery, ProfileQueryVariables>;
-export const SignupDocument = gql`
-    mutation Signup($data: CreateUserInput!) {
-  createUser(data: $data) {
-    id
-    email
-  }
-}
-    `;
-export type SignupMutationFn = ApolloReactCommon.MutationFunction<SignupMutation, SignupMutationVariables>;
-
-/**
- * __useSignupMutation__
- *
- * To run a mutation, you first call `useSignupMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useSignupMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [signupMutation, { data, loading, error }] = useSignupMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useSignupMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<SignupMutation, SignupMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<SignupMutation, SignupMutationVariables>(SignupDocument, options);
-      }
-export type SignupMutationHookResult = ReturnType<typeof useSignupMutation>;
-export type SignupMutationResult = ApolloReactCommon.MutationResult<SignupMutation>;
-export type SignupMutationOptions = ApolloReactCommon.BaseMutationOptions<SignupMutation, SignupMutationVariables>;
