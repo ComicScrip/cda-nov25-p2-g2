@@ -1,10 +1,10 @@
 import Layout from "@/components/Layout";
 import { useChildrenQuery, useUserQuery } from "@/graphql/generated/schema";
-import ChildCard from "../components/ChildCard";
+import ChildCard from "../../components/ChildCard";
 
 export default function DashboardParents() {
   const parentQuery = useUserQuery();
-  const childrenQuery = useChildrenQuery(); // doit renvoyer me { children { id } }
+  const childrenQuery = useChildrenQuery();
 
   if (parentQuery.loading || childrenQuery.loading) {
     return <div className="mx-auto max-w-sm px-6 py-8">Chargement…</div>;
