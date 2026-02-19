@@ -76,7 +76,7 @@ export default class UserResolver {
   }
 
   // Modifier un compte (infos, role, group)
-  @Authorized("admin")
+  @Authorized("admin", "staff", "parent")
   @Mutation(() => User)
   async updateUser(
     @Arg("data", () => UpdateUserInput, { validate: true })

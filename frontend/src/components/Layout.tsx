@@ -1,8 +1,8 @@
+import { Poppins } from "next/font/google";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import Header from "./Header";
-import { useRouter } from "next/router";
-import { Poppins } from 'next/font/google';
 import { useProfileQuery } from "@/graphql/generated/schema";
 import Footer from "./Footer";
 
@@ -23,6 +23,13 @@ export default function Layout({ children, pageTitle }: LayoutProps) {
     fetchPolicy: "cache-and-network",
   });
   const user = data?.me || null;
+  
+  // On utilise .includes pour être sûr de capter /profil même avec des sous-pages
+  const isProfilPage = router.pathname.includes("/profil");
+  const isHomePage = router.pathname === "/";
+
+  // On cache si c'est l'un ou l'autre
+  const shouldHideHeader = isHomePage || isProfilPage;
 
   return (
     <>
@@ -41,6 +48,9 @@ export default function Layout({ children, pageTitle }: LayoutProps) {
         {children}
       </main>
       {user && <Footer />}
+
+      {/* {!shouldHideHeader && <Header />} */}
+
     </>
   );
 }
