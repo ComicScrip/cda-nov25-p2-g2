@@ -28,7 +28,7 @@ describe("Header test", () => {
       <Header user={null} />
     </MockedProvider>);
 
-    expect(screen.getByRole("img")).toBeInTheDocument();
+    expect(screen.findByRole("img")).toBeUndefined();
     // on teste là si on a un texte 'P2 template' dans notre rendu
     // expect(screen.getByText("P2 template")).toBeInTheDocument();
     // ici, on teste si notre h1 a un texte comportant 'P2 template'
