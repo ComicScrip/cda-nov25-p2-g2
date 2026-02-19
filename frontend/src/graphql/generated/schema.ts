@@ -400,7 +400,7 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, role: string, email: string, first_name: string, last_name: string, avatar?: string | null, group?: { __typename?: 'Group', id: string, name: string } | null } | null };
+export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, first_name: string, last_name: string, avatar?: string | null, creation_date: any, email: string, phone: string, role: string, children?: Array<{ __typename?: 'Child', id: number }> | null, group?: { __typename?: 'Group', id: string, name: string, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, picture: string }> | null } | null } | null };
 
 export type UpdateProfileMutationVariables = Exact<{
   data: UpdateUserInput;
@@ -548,9 +548,26 @@ export const ProfileDocument = gql`
   me {
     id
     role
-    email
     first_name
     last_name
+    avatar
+    creation_date
+    email
+    phone
+    role
+    children {
+      id
+    }
+    group {
+      id
+      name
+      children {
+        id
+        firstName
+        lastName
+        picture
+      }
+    }
     avatar
     group {
       id

@@ -1,14 +1,25 @@
 query Profile {
   me {
     id
-    role
-    email
     first_name
     last_name
     avatar
+    creation_date
+    email
+    phone
+    role  
+    children {
+      id
+    }
     group {
       id
       name
+      children {
+        id
+        firstName
+        lastName
+        picture
+      }
     }
   }
 }
