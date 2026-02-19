@@ -63,7 +63,7 @@ export async function getCurrentUser(context: GraphQLContext): Promise<User> {
   const jwt = await getJWT(context); // on récupère le payload
   if (jwt === null) throw new UnauthenticatedError(); // si pas de payload, on renvoie une erreur UnauthenticatedError qui sera catch dans le userResolver
   // si on a un payload, on l'utilise pour récupérer l'utilisateur concerné
-  const currentUser = await User.findOne({ where: { id: jwt.userId }, relations: ["children", "group", "group.children"] });  // ajout des données enfants et group pour la fn me() qui utilise le retour de getCurrentUser
+  const currentUser = await User.findOne({ where: { id: jwt.userId }, relations: ["children", "children.group", "group", "group.children"] });  // ajout des données enfants et group pour la fn me() qui utilise le retour de getCurrentUser
   if (currentUser === null) throw new UnauthenticatedError(); // idem
   return currentUser; // on renvoie les infos de l'utilisateur si bien authentifié correctement
 }
