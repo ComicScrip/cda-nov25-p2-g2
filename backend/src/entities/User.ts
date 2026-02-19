@@ -150,7 +150,7 @@ export class ChangePasswordInput {
   )
   newPassword!: string;
 }
-// Mise à jour des informations de l'utilisateur, les champs tous nullable saud id car sinon on oblige l'admin à tout resaisir pour faire une modification
+// Mise à jour des informations de l'utilisateur, les champs tous nullable sauf id car sinon on oblige l'admin à tout resaisir pour faire une modification
 @InputType()
 export class UpdateUserInput {
   @Field(() => Int)
