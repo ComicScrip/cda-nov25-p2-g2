@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useMemo } from "react";
-import { useMeQuery, type MeQuery } from "@/graphql/generated/schema";
+import { useProfileQuery, type ProfileQuery } from "@/graphql/generated/schema";
 
 type Role = "admin" | "staff" | "parent";
 
-type AuthUser = NonNullable<MeQuery["me"]>;
+type AuthUser = NonNullable<ProfileQuery["me"]>;
 
 type AuthContextType = {
   user: AuthUser | null;
@@ -20,7 +20,7 @@ type AuthContextType = {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const { data, loading, refetch } = useMeQuery({
+  const { data, loading, refetch } = useProfileQuery({
     fetchPolicy: "network-only",
   });
 
