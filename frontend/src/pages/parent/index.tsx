@@ -1,17 +1,16 @@
 import Layout from "@/components/Layout";
-import { useChildrenQuery, useUserQuery } from "@/graphql/generated/schema";
+import { useProfileQuery } from "@/graphql/generated/schema";
 import ChildCard from "../../components/ChildCard";
 
 export default function DashboardParents() {
-  const parentQuery = useUserQuery();
-  const childrenQuery = useChildrenQuery();
+  const parentQuery = useProfileQuery();
 
-  if (parentQuery.loading || childrenQuery.loading) {
+  if (parentQuery.loading) {
     return <div className="mx-auto max-w-sm px-6 py-8">Chargement…</div>;
   }
 
-  if (parentQuery.error || childrenQuery.error) {
-    const msg = parentQuery.error?.message ?? childrenQuery.error?.message ?? "Erreur inconnue";
+  if (parentQuery.error) {
+    const msg = parentQuery.error?.message ?? "Erreur inconnue";
     return (
       <div className="mx-auto max-w-sm px-6 py-8">
         <p className="text-red-400">Erreur : {msg}</p>
@@ -20,11 +19,10 @@ export default function DashboardParents() {
   }
 
   const me = parentQuery.data?.me;
+  console.log(me);
   if (!me) return <div className="mx-auto max-w-sm px-6 py-8">Non connecté.</div>;
   if (me.role !== "parent")
     return <div className="mx-auto max-w-sm px-6 py-8">Accès réservé aux parents.</div>;
-
-  const childIds = (childrenQuery.data?.me?.children ?? []).map((c) => c.id);
 
   return (
     <Layout pageTitle="Accueil parent">
@@ -37,15 +35,15 @@ export default function DashboardParents() {
 
         <div className="w-full max-w-md rounded-[28px] border-4 border-sky-300 bg-white/70 p-5 shadow-[0_14px_35px_rgba(15,40,90,0.12)]">
           <div className="space-y-4">
-            {childIds.map((id) => (
+            {me.children?.map((child) => (
               <ChildCard
-                key={id}
-                childId={id}
-                onClick={() => console.log("ouvrir profil enfant", id)}
+                key={child.id}
+                child={child}
+                onClick={() => console.log("ouvrir profil enfant", child)}
               />
             ))}
 
-            {childIds.length === 0 && (
+            {me.children?.length === 0 && (
               <p className="rounded-2xl bg-white/60 p-4 text-center text-blue-900/80">
                 Aucun enfant renvoyé par l’API.
               </p>

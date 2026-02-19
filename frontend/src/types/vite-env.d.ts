@@ -7,10 +7,10 @@ export type Child = {
     lastName: string;
     birthDate: number;
     picture: string;
-    healthRecord: string;
+    // healthRecord: string;
     group: Group;
-    parents: User[];
-    onClick: () => void;
+    // parents: User[];
+    // onClick: () => void;
 };
 
 export type User = {
