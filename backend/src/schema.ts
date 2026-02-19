@@ -7,6 +7,7 @@ import MessageResolver from "./resolvers/MessageResolver";
 import { PlanningResolver } from "./resolvers/PlanningResolver";
 import ReportResolver from "./resolvers/ReportResolver";
 import UserResolver from "./resolvers/UserResolver";
+import { AdminResolver } from "./resolvers/AdminResolver";
 
 export async function getSchema() {
   return buildSchema({
@@ -18,6 +19,7 @@ export async function getSchema() {
       ConversationResolver,
       MessageResolver,
       PlanningResolver,
+      AdminResolver,
     ],
     authChecker,
   });
