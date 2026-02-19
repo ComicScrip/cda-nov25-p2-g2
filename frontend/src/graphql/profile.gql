@@ -1,8 +1,14 @@
-query profile {
+query Profile {
   me {
     id
-    email
-    createdAt
     role
+    email
+    first_name
+    last_name
+    avatar
+    group {
+      id
+      name
+    }
   }
 }
