@@ -29,8 +29,8 @@ export default function StaffDashboard() {
   if (user)
     return (
       <Layout pageTitle="Staff">
-        <div className="max-w-full mx-auto mt-15 md:max-w-[600px]">
-          <h2 className="mt-18 p-4 text-right text-[#1b3c79] font-light">{formatDate(date)}</h2>
+        <div className="max-w-full mx-auto md:max-w-[600px]">
+          <h2 className="p-4 text-right text-[#1b3c79] font-light">{formatDate(date)}</h2>
           <div className="w-[85%] py-10 bg-[#FEF9F6] rounded-4xl border-5 border-[#FFD771] mx-auto mb-10 flex items-center justify-evenly">
             <div className="w-20 h-20 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden border-4 border-[#FFD771] md:w-24 md:h-24">
               {user.avatar ? (

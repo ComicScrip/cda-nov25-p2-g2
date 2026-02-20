@@ -56,15 +56,6 @@ const EditProfilePage = () => {
     <Layout pageTitle="Modifier mon profil">
       <div className="bb-screen">
         <div className="bb-mobile-container">
-          <header className="bb-header">
-            <img src="/babyboardlogo.png" alt="BabyBoard" className="bb-logo-big" />
-            <img
-              src={formData.avatar || "/avatarfille.png"}
-              className="bb-top-avatar-big"
-              alt="Avatar"
-            />
-          </header>
-
           <main className="bb-main">
             <div className="bb-title-card">
               <h1>Modifier Profil</h1>
@@ -136,18 +127,6 @@ const EditProfilePage = () => {
               </div>
             </form>
           </main>
-
-          <nav className="bb-bottom-nav">
-            <div className="bb-nav-item">
-              <img src="/home.png" alt="Home" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/calendrier.png" alt="Calendar" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/chat.png" alt="Chat" />
-            </div>
-          </nav>
         </div>
       </div>
     </Layout>

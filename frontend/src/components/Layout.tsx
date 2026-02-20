@@ -20,13 +20,34 @@ interface LayoutProps {
 export default function Layout({ children, pageTitle }: LayoutProps) {
   const router = useRouter();
 
-  // const { data } = useProfileQuery({
-  //   fetchPolicy: "cache-and-network",
-  // });
-  // const user = data?.me || null;
   const { user, refreshMe } = useAuth();
+
+  const body = document.body;
   
   refreshMe();
+
+  if(router.pathname === "/") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  }  
+  
+  if(router.pathname === "/admin") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  } 
+   
+  if(router.pathname === "/staff") {
+    body.classList.remove("home", "md:home-large");
+    body.classList.add(`group${user?.group?.id}`, "md:staff-large");
+  } 
+  
+  if(router.pathname === "/parent") {
+    body.classList.add("home", "md:home-large");
+  }
+  
+  if(router.pathname.startsWith("/profil")) {
+    body.classList.add("home", "md:home-large");
+  }  
 
   return (
     <>
@@ -37,11 +58,7 @@ export default function Layout({ children, pageTitle }: LayoutProps) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       {user && <Header user={user} />}
-      <main className={`${poppins.className} 
-        ${(router.pathname === "/" && "home md:home-large" )}
-        ${(router.pathname === "/admin" && "home md:home-large" )}
-        ${(router.pathname === "/staff" && `group${user?.group?.id} md:staff-large` )}
-        ${(router.pathname === "/parent" && "home md:home-large" )} `} >
+      <main className={` ${poppins.className} `}>
         {children}
       </main>
       {user && <Footer />}

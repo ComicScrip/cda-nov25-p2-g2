@@ -15,17 +15,6 @@ const ProfilPage = () => {
     <Layout pageTitle="Mon Profil">
       <div className="bb-screen">
         <div className="bb-mobile-container">
-          <header className="bb-header">
-            <img src="/babyboardlogo.png" alt="BabyBoard" className="bb-logo-big" />
-            {/* Avatar en haut à droite (optionnel) */}
-            {/** biome-ignore lint/performance/noImgElement: <explanation> */}
-            <img
-              src={user?.avatar || "/avatarfille.png"}
-              alt="Profil"
-              className="bb-top-avatar-big"
-            />
-          </header>
-
           <main className="bb-main">
             <div className="bb-title-card">
               <h1>Mon profil</h1>
@@ -70,18 +59,6 @@ const ProfilPage = () => {
               </div>
             </div>
           </main>
-
-          <nav className="bb-bottom-nav">
-            <div className="bb-nav-item">
-              <img src="/home.png" alt="Home" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/calendrier.png" alt="Calendar" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/chat.png" alt="Chat" />
-            </div>
-          </nav>
         </div>
       </div>
     </Layout>
