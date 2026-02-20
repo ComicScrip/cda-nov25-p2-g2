@@ -1,13 +1,24 @@
+// biome-ignore assist/source/organizeImports: <explanation>
 import Layout from "@/components/Layout";
-import { useProfileQuery } from "@/graphql/generated/schema";
+import { useAuth } from "@/context/AuthContext";
 import formatDate from "@/utils/formatDate";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export default function StaffDashboard() {
-  const { data } = useProfileQuery({ fetchPolicy: "cache-and-network" });
-  const user = data?.me || null;
+  const router = useRouter();
+  const { user, loading, isStaff } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+    if (!user) router.replace("/");
+    else if (!isStaff) router.replace("/403");
+  }, [loading, user, isStaff, router]);
+
+  if (loading) return null;
+  if (!user || !isStaff) return null;
   // date du jour
   const date = new Date();
-
   // fn pour afficher mette la première lettre du nom de famille si pas d'avatar
   const getUserInitial = (lastName: string) => {
     return lastName.charAt(0).toUpperCase();
@@ -28,7 +39,7 @@ export default function StaffDashboard() {
               )}
             </div>
             <div className="text-[#1b3c79]">
-              <p className="font-semibold text-2xl">{user && user.first_name}</p>
+              <p className="font-semibold text-2xl">{user.first_name}</p>
               <p>
                 {user.group?.name} ({user.group?.children?.length})
               </p>
