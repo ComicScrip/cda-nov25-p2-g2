@@ -1,3 +1,4 @@
+// biome-ignore assist/source/organizeImports: <explanation>
 import "@/styles/globals.css";
 import { ApolloProvider } from "@apollo/client/react";
 import type { AppProps } from "next/app";

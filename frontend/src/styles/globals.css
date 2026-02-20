@@ -46,8 +46,6 @@ main {
 @utility staff-large {
   background-position-y: 70%;
   background-position-x: 50%;
-  background-clip: ;
-  
 }
 
 .group1 {
@@ -66,6 +64,7 @@ main {
   background-size: cover;
 }
 
+
 :root {
   --bb-blue-border: #a5e1ff;
   --bb-text-blue: #2d5a9e;
@@ -78,6 +77,7 @@ body {
   margin: 0;
   overflow: hidden; /* Supprime le scroll navigateur */
 }
+
 
 .bb-screen {
   min-height: 100vh;

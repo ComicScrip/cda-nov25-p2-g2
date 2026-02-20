@@ -385,6 +385,18 @@ export type ChangePasswordMutationVariables = Exact<{
 
 export type ChangePasswordMutation = { __typename?: 'Mutation', changePassword: boolean };
 
+export type ChildByIdQueryVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+
+export type ChildByIdQuery = { __typename?: 'Query', child: { __typename?: 'Child', id: number, firstName: string, lastName: string, birthDate: any, picture: string, group: { __typename?: 'Group', name: string } } };
+
+export type ChildrenQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type ChildrenQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, birthDate: any, picture: string, healthRecord?: string | null, group: { __typename?: 'Group', name: string } }> | null } | null };
+
 export type LoginMutationVariables = Exact<{
   data: LoginInput;
 }>;
@@ -400,7 +412,7 @@ export type LogoutMutation = { __typename?: 'Mutation', logout: boolean };
 export type ProfileQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, first_name: string, last_name: string, avatar?: string | null, creation_date: any, email: string, phone: string, role: string, children?: Array<{ __typename?: 'Child', id: number }> | null, group?: { __typename?: 'Group', id: string, name: string, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, picture: string }> | null } | null } | null };
+export type ProfileQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, first_name: string, last_name: string, avatar?: string | null, creation_date: any, email: string, phone: string, role: string, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, birthDate: any, picture: string, group: { __typename?: 'Group', id: string, name: string } }> | null, group?: { __typename?: 'Group', id: string, name: string, children?: Array<{ __typename?: 'Child', id: number, firstName: string, lastName: string, picture: string }> | null } | null } | null };
 
 export type UpdateProfileMutationVariables = Exact<{
   data: UpdateUserInput;
@@ -408,6 +420,11 @@ export type UpdateProfileMutationVariables = Exact<{
 
 
 export type UpdateProfileMutation = { __typename?: 'Mutation', updateUser: { __typename?: 'User', id: number, first_name: string, last_name: string, phone: string, avatar?: string | null } };
+
+export type UserQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type UserQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, email: string, role: string, first_name: string, last_name: string, phone: string, avatar?: string | null, creation_date: any, group?: { __typename?: 'Group', id: string, name: string } | null } | null };
 
 
 export const AdminCountsDocument = gql`
@@ -482,6 +499,103 @@ export function useChangePasswordMutation(baseOptions?: ApolloReactHooks.Mutatio
 export type ChangePasswordMutationHookResult = ReturnType<typeof useChangePasswordMutation>;
 export type ChangePasswordMutationResult = ApolloReactCommon.MutationResult<ChangePasswordMutation>;
 export type ChangePasswordMutationOptions = ApolloReactCommon.BaseMutationOptions<ChangePasswordMutation, ChangePasswordMutationVariables>;
+export const ChildByIdDocument = gql`
+    query childById($id: Int!) {
+  child(id: $id) {
+    id
+    firstName
+    lastName
+    birthDate
+    picture
+    group {
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useChildByIdQuery__
+ *
+ * To run a query within a React component, call `useChildByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChildByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChildByIdQuery({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useChildByIdQuery(baseOptions: ApolloReactHooks.QueryHookOptions<ChildByIdQuery, ChildByIdQueryVariables> & ({ variables: ChildByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<ChildByIdQuery, ChildByIdQueryVariables>(ChildByIdDocument, options);
+      }
+export function useChildByIdLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ChildByIdQuery, ChildByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<ChildByIdQuery, ChildByIdQueryVariables>(ChildByIdDocument, options);
+        }
+export function useChildByIdSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ChildByIdQuery, ChildByIdQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<ChildByIdQuery, ChildByIdQueryVariables>(ChildByIdDocument, options);
+        }
+export type ChildByIdQueryHookResult = ReturnType<typeof useChildByIdQuery>;
+export type ChildByIdLazyQueryHookResult = ReturnType<typeof useChildByIdLazyQuery>;
+export type ChildByIdSuspenseQueryHookResult = ReturnType<typeof useChildByIdSuspenseQuery>;
+export type ChildByIdQueryResult = ApolloReactCommon.QueryResult<ChildByIdQuery, ChildByIdQueryVariables>;
+export const ChildrenDocument = gql`
+    query children {
+  me {
+    id
+    children {
+      id
+      firstName
+      lastName
+      birthDate
+      picture
+      healthRecord
+      group {
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useChildrenQuery__
+ *
+ * To run a query within a React component, call `useChildrenQuery` and pass it any options that fit your needs.
+ * When your component renders, `useChildrenQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useChildrenQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useChildrenQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+      }
+export function useChildrenLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+        }
+export function useChildrenSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<ChildrenQuery, ChildrenQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<ChildrenQuery, ChildrenQueryVariables>(ChildrenDocument, options);
+        }
+export type ChildrenQueryHookResult = ReturnType<typeof useChildrenQuery>;
+export type ChildrenLazyQueryHookResult = ReturnType<typeof useChildrenLazyQuery>;
+export type ChildrenSuspenseQueryHookResult = ReturnType<typeof useChildrenSuspenseQuery>;
+export type ChildrenQueryResult = ApolloReactCommon.QueryResult<ChildrenQuery, ChildrenQueryVariables>;
 export const LoginDocument = gql`
     mutation Login($data: LoginInput!) {
   login(data: $data)
@@ -556,6 +670,14 @@ export const ProfileDocument = gql`
     role
     children {
       id
+      firstName
+      lastName
+      birthDate
+      picture
+      group {
+        id
+        name
+      }
     }
     group {
       id
@@ -639,3 +761,53 @@ export function useUpdateProfileMutation(baseOptions?: ApolloReactHooks.Mutation
 export type UpdateProfileMutationHookResult = ReturnType<typeof useUpdateProfileMutation>;
 export type UpdateProfileMutationResult = ApolloReactCommon.MutationResult<UpdateProfileMutation>;
 export type UpdateProfileMutationOptions = ApolloReactCommon.BaseMutationOptions<UpdateProfileMutation, UpdateProfileMutationVariables>;
+export const UserDocument = gql`
+    query user {
+  me {
+    id
+    email
+    role
+    first_name
+    last_name
+    phone
+    avatar
+    creation_date
+    group {
+      id
+      name
+    }
+  }
+}
+    `;
+
+/**
+ * __useUserQuery__
+ *
+ * To run a query within a React component, call `useUserQuery` and pass it any options that fit your needs.
+ * When your component renders, `useUserQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useUserQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useUserQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<UserQuery, UserQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+      }
+export function useUserLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export function useUserSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<UserQuery, UserQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<UserQuery, UserQueryVariables>(UserDocument, options);
+        }
+export type UserQueryHookResult = ReturnType<typeof useUserQuery>;
+export type UserLazyQueryHookResult = ReturnType<typeof useUserLazyQuery>;
+export type UserSuspenseQueryHookResult = ReturnType<typeof useUserSuspenseQuery>;
+export type UserQueryResult = ApolloReactCommon.QueryResult<UserQuery, UserQueryVariables>;

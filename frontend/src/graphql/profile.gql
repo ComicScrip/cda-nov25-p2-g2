@@ -10,6 +10,14 @@ query Profile {
     role  
     children {
       id
+      firstName
+      lastName
+      birthDate
+      picture
+      group {
+        id
+        name
+      }
     }
     group {
       id

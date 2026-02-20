@@ -43,6 +43,7 @@ const ProfilPage = () => {
                   />
                   <Link href="/profil/edit">
                     <div className="bb-edit-circle">
+                      {/** biome-ignore lint/performance/noImgElement: <explanation> */}
                       <img src="/modifier.png" alt="Edit" />
                     </div>
                   </Link>
