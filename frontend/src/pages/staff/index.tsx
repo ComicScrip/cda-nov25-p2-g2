@@ -17,8 +17,10 @@ export default function StaffDashboard() {
 
   if (loading) return null;
   if (!user || !isStaff) return null;
+  
   // date du jour
   const date = new Date();
+  
   // fn pour afficher mette la première lettre du nom de famille si pas d'avatar
   const getUserInitial = (lastName: string) => {
     return lastName.charAt(0).toUpperCase();

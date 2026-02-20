@@ -51,7 +51,7 @@ export default function Header({user} : {user: HeaderProps}) {  // typage des pr
       <header className="absolute top-0 left-0 right-0">
         <nav className="flex p-3 w-full flex-row justify-between items-center bg-transparent">
           <Link href="/" className="w-[50%] md:w-[300px]">
-            <img src="/logo.png" />
+            <img src="/logo-inline.png" />   {/* logo pour le header sans espace haut et bas */}
           </Link>
 
           <div className="flex gap-2 items-center">

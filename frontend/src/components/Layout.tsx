@@ -3,7 +3,8 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import Header from "./Header";
-import { useProfileQuery } from "@/graphql/generated/schema";
+// import { useProfileQuery } from "@/graphql/generated/schema";
+import { useAuth } from "@/context/AuthContext";
 import Footer from "./Footer";
 
 const poppins = Poppins({
@@ -19,17 +20,13 @@ interface LayoutProps {
 export default function Layout({ children, pageTitle }: LayoutProps) {
   const router = useRouter();
 
-  const { data } = useProfileQuery({
-    fetchPolicy: "cache-and-network",
-  });
-  const user = data?.me || null;
+  // const { data } = useProfileQuery({
+  //   fetchPolicy: "cache-and-network",
+  // });
+  // const user = data?.me || null;
+  const { user, refreshMe } = useAuth();
   
-  // On utilise .includes pour être sûr de capter /profil même avec des sous-pages
-  const isProfilPage = router.pathname.includes("/profil");
-  const isHomePage = router.pathname === "/";
-
-  // On cache si c'est l'un ou l'autre
-  const shouldHideHeader = isHomePage || isProfilPage;
+  refreshMe();
 
   return (
     <>
@@ -48,9 +45,6 @@ export default function Layout({ children, pageTitle }: LayoutProps) {
         {children}
       </main>
       {user && <Footer />}
-
-      {/* {!shouldHideHeader && <Header />} */}
-
     </>
   );
 }
