@@ -18,7 +18,7 @@ export default function DashboardParents() {
   if (!user || !isParent) return null;
   return (
     <Layout pageTitle="Accueil parent">
-      <div className="mt-35 p-4 mb-6 w-full max-w-md rounded-2xl border-4 border-sky-300 bg-white/90 px-4 py-4 text-center shadow-[0_12px_30px_rgba(15,40,90,0.12)]">
+      <div className="mt-10 p-4 mb-6 w-full max-w-md rounded-2xl border-4 border-sky-300 bg-white/90 px-4 py-4 text-center shadow-[0_12px_30px_rgba(15,40,90,0.12)]">
         <h1 className="text-3xl font-extrabold tracking-wide text-blue-900">
           Bienvenue {user?.first_name}
         </h1>
