@@ -12,14 +12,14 @@ export function useAuth() {
   const isStaff = role === "staff";
   const isParent = role === "parent";
 
-    return {
-      user,
-      loading,
-      isAuthenticated,
-      isAdmin,
-      isStaff,
-      isParent,
-      refetch,
-      group,
-    };
+  return {
+    user,
+    loading,
+    isAuthenticated,
+    isAdmin,
+    isStaff,
+    isParent,
+    refetch,
+    group,
+  };
 }
