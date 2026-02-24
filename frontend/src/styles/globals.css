@@ -6,8 +6,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --color-primary: #F6DDE4;
-  --color-secondary: #D4EFFF;
+  --color-primary: #f6dde4;
+  --color-secondary: #d4efff;
 }
 
 body {
@@ -51,7 +51,6 @@ main {
 .group1 {
   background-image: url("/orange.png");
   background-size: cover;
-  
 }
 
 .group2 {
@@ -64,13 +63,11 @@ main {
   background-size: cover;
 }
 
-
 :root {
   --bb-blue-border: #a5e1ff;
   --bb-text-blue: #2d5a9e;
   --bb-pink-border: #ffcce6;
 }
-
 
 .bb-screen {
   /* min-height: 100vh;

@@ -12,9 +12,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         className="object-cover object-center"
       />
       <div className="absolute inset-0 bg-white/20" />
-      <div className="relative mx-auto w-full max-w-[430px] px-4 pb-28 pt-4">
-        {children}
-      </div>
+      <div className="relative mx-auto w-full max-w-[430px] px-4 pb-28 pt-4">{children}</div>
     </main>
   );
 }

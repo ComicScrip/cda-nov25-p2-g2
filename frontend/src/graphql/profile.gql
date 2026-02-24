@@ -7,7 +7,7 @@ query Profile {
     creation_date
     email
     phone
-    role  
+    role
     children {
       id
       firstName
