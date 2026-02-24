@@ -2,15 +2,11 @@ import type React from "react";
 
 type Props = {
   child: {
-    id: string;
     firstName: string;
     lastName: string;
-    birthDate: string;
+    birthDate: number;
     picture: string;
-    group?: {
-      name: string;
-      children: Array<{ id: string; firstName: string; lastName: string; picture: string }>;
-    };
+    group: { id: string; name: string };
   };
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
