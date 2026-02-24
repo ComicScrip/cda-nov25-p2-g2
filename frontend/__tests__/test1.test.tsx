@@ -31,9 +31,5 @@ describe("Header test", () => {
     );
 
     expect(screen.queryByRole("img")).toBe(null);
-    // on teste là si on a un texte 'P2 template' dans notre rendu
-    // expect(screen.getByText("P2 template")).toBeInTheDocument();
-    // ici, on teste si notre h1 a un texte comportant 'P2 template'
-    // expect(screen.getByRole("heading", {level: 1})).toHaveTextContent("P2 template");
   });
 });
