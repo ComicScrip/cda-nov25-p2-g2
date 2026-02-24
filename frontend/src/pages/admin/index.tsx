@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/CurrentProfile";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminCountsQuery } from "@/graphql/generated/schema";
 
@@ -13,7 +13,6 @@ export default function AdminDashboard() {
 });
 
 const counts = data?.adminCounts;
-
 
   useEffect(() => {
     if (loading) return;

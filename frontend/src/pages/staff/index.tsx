@@ -1,6 +1,6 @@
 // biome-ignore assist/source/organizeImports: <explanation>
 import Layout from "@/components/Layout";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/CurrentProfile";
 import formatDate from "@/utils/formatDate";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -17,10 +17,10 @@ export default function StaffDashboard() {
 
   if (loading) return null;
   if (!user || !isStaff) return null;
-  
+
   // date du jour
   const date = new Date();
-  
+
   // fn pour afficher mette la première lettre du nom de famille si pas d'avatar
   const getUserInitial = (lastName: string) => {
     return lastName.charAt(0).toUpperCase();

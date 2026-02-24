@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import type { ReactNode } from "react";
 import Header from "./Header";
 // import { useProfileQuery } from "@/graphql/generated/schema";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/CurrentProfile";
 import Footer from "./Footer";
 
 const poppins = Poppins({
@@ -20,34 +20,32 @@ interface LayoutProps {
 export default function Layout({ children, pageTitle }: LayoutProps) {
   const router = useRouter();
 
-  const { user, refreshMe } = useAuth();
+  const { user , refetch } = useAuth();  // refetch ?
 
   const body = document.body;
-  
-  refreshMe();
 
   if(router.pathname === "/") {
     body.classList.remove("group1", "group2", "group3", "md:staff-large");
     body.classList.add("home", "md:home-large");
-  }  
-  
+  }
+
   if(router.pathname === "/admin") {
     body.classList.remove("group1", "group2", "group3", "md:staff-large");
     body.classList.add("home", "md:home-large");
-  } 
-   
+  }
+
   if(router.pathname === "/staff") {
     body.classList.remove("home", "md:home-large");
     body.classList.add(`group${user?.group?.id}`, "md:staff-large");
-  } 
-  
+  }
+
   if(router.pathname === "/parent") {
     body.classList.add("home", "md:home-large");
   }
-  
+
   if(router.pathname.startsWith("/profil")) {
     body.classList.add("home", "md:home-large");
-  }  
+  }
 
   return (
     <>

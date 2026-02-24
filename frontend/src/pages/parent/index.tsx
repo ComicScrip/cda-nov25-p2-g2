@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import Layout from "@/components/Layout";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/CurrentProfile";
 import ChildCard from "../../components/ChildCard";
 
 export default function DashboardParents() {
