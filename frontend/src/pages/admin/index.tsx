@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
-import AdminLayout from "@/components/admin/AdminLayout";
+import Layout from "@/components/Layout";
 import { useAdminCountsQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/hooks/CurrentProfile";
 
@@ -24,7 +24,7 @@ export default function AdminDashboard() {
   if (!user || !isAdmin) return null;
 
   return (
-    <AdminLayout>
+    <Layout pageTitle="admin dashboard">
       <div className="flex items-center justify-between">
         <Image src="/babyboardlogo.png" alt="logo" width={150} height={40} priority />
 
@@ -217,6 +217,6 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
-    </AdminLayout>
+    </Layout>
   );
 }
