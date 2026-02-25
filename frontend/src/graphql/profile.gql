@@ -1,8 +1,33 @@
-query profile {
+query Profile {
   me {
     id
+    first_name
+    last_name
+    avatar
+    creation_date
     email
-    createdAt
+    phone
     role
+    children {
+      id
+      firstName
+      lastName
+      birthDate
+      picture
+      group {
+        id
+        name
+      }
+    }
+    group {
+      id
+      name
+      children {
+        id
+        firstName
+        lastName
+        picture
+      }
+    }
   }
 }

@@ -1,6 +1,16 @@
+import { Poppins } from "next/font/google";
 import Head from "next/head";
+import { useRouter } from "next/router";
 import type { ReactNode } from "react";
+// import { useProfileQuery } from "@/graphql/generated/schema";
+import { useAuth } from "@/hooks/CurrentProfile";
+import Footer from "./Footer";
 import Header from "./Header";
+
+const poppins = Poppins({
+  display: "auto",
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+});
 
 interface LayoutProps {
   children: ReactNode;
@@ -8,16 +18,46 @@ interface LayoutProps {
 }
 
 export default function Layout({ children, pageTitle }: LayoutProps) {
+  const router = useRouter();
+
+  const { user, refetch } = useAuth(); // refetch ?
+
+  const body = document.body;
+
+  if (router.pathname === "/") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname === "/admin") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname === "/staff") {
+    body.classList.remove("home", "md:home-large");
+    body.classList.add(`group${user?.group?.id}`, "md:staff-large");
+  }
+
+  if (router.pathname === "/parent") {
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname.startsWith("/profil")) {
+    body.classList.add("home", "md:home-large");
+  }
+
   return (
     <>
       <Head>
-        <title>{`P2 Template - ${pageTitle}`}</title>
+        <title>{`BabyBoard - ${pageTitle}`}</title>
         <meta name="description" content="ads website" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Header />
-      <main className="bg-gray-50">{children}</main>
+      {user && <Header user={user} />}
+      <main className={` ${poppins.className} `}>{children}</main>
+      {user && <Footer />}
     </>
   );
 }

@@ -1,21 +1,31 @@
 import { DataSource } from "typeorm";
-import { Child } from "../entities/Child";
-import { Conversation } from "../entities/Conversation";
-import { Group } from "../entities/Group";
-import { Message } from "../entities/Message";
-import { Planning } from "../entities/Planning";
-import { Report } from "../entities/Report";
 import { User } from "../entities/User";
 import env from "../env";
+import { Child } from "../entities/Child";
+import { Group } from "../entities/Group";
+import { Planning } from "../entities/Planning";
+import { Report } from "../entities/Report";
 
-export default new DataSource({
+const db = new DataSource({
   type: "postgres",
   host: env.DB_HOST,
   username: env.DB_USER,
   password: env.DB_PASS,
-  port: env.DB_PORT,
+  port: env.NODE_ENV === "test" ? env.TEST_DB_PORT : env.DB_PORT,
   database: env.DB_NAME,
-  entities: [User, Report, Group, Planning, Child, Message, Conversation],
+  entities: [User,Child, Group,Planning,Report],
   synchronize: env.NODE_ENV !== "production",
-  //logging: true
+  //logging: true,
 });
+
+export async function clearDB() {
+  const runner = db.createQueryRunner();
+  const tableDroppings = db.entityMetadatas.map((entity) =>
+    runner.query(`DROP TABLE IF EXISTS "${entity.tableName}" CASCADE`),
+  );
+  await Promise.all(tableDroppings);
+  await runner.release();
+  await db.synchronize();
+}
+
+export default db;

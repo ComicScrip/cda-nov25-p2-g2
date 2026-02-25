@@ -1,23 +1,9 @@
 import { hash, verify } from "argon2";
 import { GraphQLError } from "graphql";
-import {
-  Arg,
-  Authorized,
-  Ctx,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { endSession, getCurrentUser, startSession } from "../auth";
 import { Group } from "../entities/Group";
-import {
-  ChangePasswordInput,
-  CreateUserInput,
-  LoginInput,
-  UpdateUserInput,
-  User,
-} from "../entities/User";
+import { ChangePasswordInput, CreateUserInput, LoginInput, UpdateUserInput, User } from "../entities/User";
 import { NotFoundError, UnauthenticatedError } from "../errors";
 import type { GraphQLContext } from "../types";
 
@@ -90,7 +76,7 @@ export default class UserResolver {
   }
 
   // Modifier un compte (infos, role, group)
-  @Authorized("admin")
+  @Authorized("admin", "staff", "parent")
   @Mutation(() => User)
   async updateUser(
     @Arg("data", () => UpdateUserInput, { validate: true })
@@ -168,43 +154,42 @@ export default class UserResolver {
     return true;
   }
 
+  // Login d'un user
   @Mutation(() => String)
   async login(
     @Arg("data", () => LoginInput, { validate: true }) data: LoginInput,
-    @Ctx() context: GraphQLContext,
+    @Ctx() context: GraphQLContext, // prend le context pour l'utiliser
   ) {
     const email = normalizeEmail(data.email);
+    // vérif si on trouve un user en BDD via l'email
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      throw new UnauthenticatedError({
-        message: "Invalid email or password",
-      });
+      throw new UnauthenticatedError({ message: "Invalid email or password" });
     }
 
+    // vérif si mot de passe correspondant
     const isPasswordValid = await verify(user.hashedPassword, data.password);
     if (!isPasswordValid) {
-      throw new UnauthenticatedError({
-        message: "Invalid email or password",
-      });
+      throw new UnauthenticatedError({ message: "Invalid email or password" });
     }
-
-    return startSession(context, user);
+    // 
+    return startSession(context, user); // on utilise le context et le user logué : va créer le jwt dans le cookie "authToken" de la response (elle renverra le token)
   }
 
   // Déconnexion (clear cookie)
   @Mutation(() => Boolean)
   async logout(@Ctx() context: GraphQLContext) {
-    endSession(context);
+    endSession(context); // efface le cookie d'authentification
     return true;
   }
 
-  // Profil courant
+  // Profil courant : me()
   @Query(() => User, { nullable: true })
   async me(@Ctx() context: GraphQLContext) {
     try {
-      return await getCurrentUser(context);
+      return await getCurrentUser(context); // renvoie les infos de l'utilisateur authentifié
     } catch {
-      return null;
+      return null; // si pas de user connecté (erreur interceptée), renvoie 'null'
     }
   }
   // Changer son mot de passe (user connecté)

@@ -125,13 +125,7 @@ export class LoginInput {
   email: string;
 
   @Field()
-  @IsStrongPassword(
-    {},
-    {
-      message:
-        "Le mot de passe doit contenir au moins 8 caractères, dont une minuscule, une majuscule, un chiffre et un caractère spécial",
-    },
-  )
+  @IsStrongPassword({}, { message: "Le mot de passe doit contenir au moins 8 caractères, dont une minuscule, une majuscule, un chiffre et un caractère spécial" })
   password: string;
 }
 // L'utilisateur peut changer son mot passe ensuite
@@ -141,16 +135,10 @@ export class ChangePasswordInput {
   currentPassword!: string;
 
   @Field()
-  @IsStrongPassword(
-    {},
-    {
-      message:
-        "Le nouveau mot de passe doit contenir au moins 8 caractères, dont une minuscule, une majuscule, un chiffre et un caractère spécial",
-    },
-  )
+  @IsStrongPassword({}, { message: "Le nouveau mot de passe doit contenir au moins 8 caractères, dont une minuscule, une majuscule, un chiffre et un caractère spécial" })
   newPassword!: string;
 }
-// Mise à jour des informations de l'utilisateur, les champs tous nullable saud id car sinon on oblige l'admin à tout resaisir pour faire une modification
+// Mise à jour des informations de l'utilisateur, les champs tous nullable sauf id car sinon on oblige l'admin à tout resaisir pour faire une modification
 @InputType()
 export class UpdateUserInput {
   @Field(() => Int)
@@ -173,9 +161,7 @@ export class UpdateUserInput {
 
   @Field(() => String, { nullable: true })
   @IsOptional()
-  @Length(8, 20, {
-    message: "Le numéro de téléphone doit contenir entre 8 et 20 caractères",
-  })
+  @Length(8, 20, { message: "Le numéro de téléphone doit contenir entre 8 et 20 caractères" })
   phone?: string | null;
 
   @Field(() => String, { nullable: true })

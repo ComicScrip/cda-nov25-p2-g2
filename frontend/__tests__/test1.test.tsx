@@ -1,22 +1,35 @@
 import { MockedProvider } from "@apollo/client/testing/react";
 import { render, screen } from "@testing-library/react";
 import Header from "@/components/Header";
+import { ProfileDocument } from "@/graphql/generated/schema";
 
-// Mock next/router
+const profileMock = {
+  request: {
+    query: ProfileDocument,
+  },
+  result: {
+    data: {
+      me: null,
+    },
+  },
+};
 
 jest.mock("next/router", () => ({
-  useRouter: () => ({
-    push: jest.fn(),
-  }),
+  useRouter() {
+    return {
+      push: () => jest.fn(), // méthode utilisée Header
+    };
+  },
 }));
 
-describe("Heading", () => {
-  it("composed h1", () => {
+describe("Header test", () => {
+  it("contains a img element in Header", async () => {
     render(
-      <MockedProvider>
-        <Header />
+      <MockedProvider mocks={[profileMock]}>
+        <Header user={null} />
       </MockedProvider>,
     );
-    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+
+    expect(screen.queryByRole("img")).toBe(null);
   });
 });

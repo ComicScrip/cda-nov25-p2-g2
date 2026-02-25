@@ -6,6 +6,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --color-primary: #f6dde4;
+  --color-secondary: #d4efff;
 }
 
 body {
@@ -17,7 +19,7 @@ body {
 html,
 body,
 #__next {
-  height: 100%;
+  min-height: 100vh; /* afin d'avoir une page de hauteur min de l'écran */
 }
 
 body,
@@ -29,4 +31,242 @@ body,
 
 main {
   flex-grow: 1;
+}
+
+.home {
+  background-image: url("/chateau.png");
+  background-size: cover;
+  background-position-x: 48%;
+}
+
+@utility home-large {
+  background-position-y: 80%;
+}
+
+@utility staff-large {
+  background-position-y: 70%;
+  background-position-x: 50%;
+}
+
+.group1 {
+  background-image: url("/orange.png");
+  background-size: cover;
+}
+
+.group2 {
+  background-image: url("/vert.png");
+  background-size: cover;
+}
+
+.group3 {
+  background-image: url("/violet.png");
+  background-size: cover;
+}
+
+:root {
+  --bb-blue-border: #a5e1ff;
+  --bb-text-blue: #2d5a9e;
+  --bb-pink-border: #ffcce6;
+}
+
+.bb-screen {
+  background-attachment: fixed;
+  display: flex;
+  justify-content: center;
+}
+
+.bb-mobile-container {
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 15px;
+}
+
+/* Header */
+.bb-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.bb-logo-big {
+  height: 110px;
+}
+.bb-top-avatar-big {
+  height: 100px;
+  width: 70px;
+  border-radius: 100%;
+}
+
+/* Titre */
+.bb-title-card {
+  background: white;
+  border: 3.5px solid var(--bb-blue-border);
+  border-radius: 20px;
+  padding: 12px;
+  text-align: center;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 10px rgba(165, 225, 255, 0.3);
+}
+
+.bb-title-card h1 {
+  color: var(--bb-text-blue);
+  font-size: 1.6rem;
+  margin: 0;
+}
+
+/* Carte principale */
+.bb-profile-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 3.5px solid var(--bb-blue-border);
+  border-radius: 50px;
+  padding: 165px 35px 35px 25px;
+  position: relative;
+}
+
+/* Avatar central */
+.bb-avatar-center-container {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.bb-avatar-outline {
+  width: 160px;
+  height: 160px;
+  background: white;
+  border: 5px solid var(--bb-blue-border);
+  border-radius: 50%;
+  padding: 5px;
+  position: relative;
+}
+
+.bb-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bb-edit-circle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background: white;
+  border: 2px solid var(--bb-pink-border);
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Champs d'infos */
+.bb-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.bb-info-field {
+  background: white;
+  border: 2px solid var(--bb-pink-border);
+  border-radius: 18px;
+  padding: 14px 20px;
+  color: var(--bb-text-blue);
+  font-size: 1rem;
+}
+
+/* Nav basse */
+.bb-bottom-nav {
+  margin-top: auto;
+  padding: 20px 0 30px 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.bb-nav-item img {
+  width: 150px;
+}
+.bb-nav-center {
+  width: 70px;
+}
+
+/* --- Spécificités Page Mot de Passe --- */
+
+.bb-input-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.bb-label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--bb-text-blue);
+  margin-bottom: 5px;
+  margin-left: 10px;
+  font-weight: bold;
+}
+
+.bb-edit-input {
+  width: 100%;
+  outline: none;
+  background: transparent;
+  border: none; /* On laisse la bordure au parent .bb-info-field */
+}
+
+/* Conteneur pour aligner l'input et l'oeil */
+.bb-password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Bouton pour afficher/masquer le mot de passe */
+.bb-eye-btn {
+  position: absolute;
+  right: 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  z-index: 5;
+}
+
+.bb-eye-btn img {
+  width: 22px;
+  opacity: 0.5;
+  transition: opacity 0.2s;
+}
+
+.bb-eye-btn:hover img {
+  opacity: 0.8;
+}
+
+.bb-notice-text {
+  font-size: 0.8rem;
+  color: #555;
+  text-align: center;
+  line-height: 1.4;
+  margin-top: 25px;
+  padding: 0 10px;
+}
+
+.bb-btn-valider:hover {
+  background-color: #b3e5fc;
+}
+
+.bb-btn-valider:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

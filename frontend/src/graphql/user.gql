@@ -1,0 +1,16 @@
+query user {
+  me {
+    id
+    email
+    role
+    first_name
+    last_name
+    phone
+    avatar
+    creation_date
+    group {
+      id
+      name
+    }
+  }
+}

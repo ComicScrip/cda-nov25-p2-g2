@@ -9,7 +9,7 @@ console.log("GQL API URL :", uri);
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
-    uri: uri ,
+    uri: uri,
     credentials: "include", // Important: Include cookies with requests
   }),
 });
