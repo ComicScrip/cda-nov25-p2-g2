@@ -34,7 +34,7 @@ const ChangePasswordPage = () => {
 
       if (result.data?.changePassword) {
         alert("Mot de passe modifié avec succès !");
-        router.push("/profil");
+        router.push("/profil/profil");
       } else {
         alert("Erreur : Informations incorrectes.");
       }
@@ -48,11 +48,6 @@ const ChangePasswordPage = () => {
     <Layout pageTitle="Modification mot de passe">
       <div className="bb-screen">
         <div className="bb-mobile-container">
-          <header className="bb-header">
-            <img src="/babyboardlogo.png" alt="BabyBoard" className="bb-logo-big" />
-            <img src="/avatarfille.png" className="bb-top-avatar-big" alt="Avatar" />
-          </header>
-
           <main className="bb-main">
             <div className="bb-title-card">
               <h1>Modification mot de passe</h1>
@@ -124,18 +119,6 @@ const ChangePasswordPage = () => {
               </p>
             </div>
           </main>
-
-          <nav className="bb-bottom-nav">
-            <div className="bb-nav-item">
-              <img src="/home.png" alt="Home" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/calendrier.png" alt="Calendar" className="bb-nav-center" />
-            </div>
-            <div className="bb-nav-item">
-              <img src="/chat.png" alt="Chat" />
-            </div>
-          </nav>
         </div>
       </div>
     </Layout>

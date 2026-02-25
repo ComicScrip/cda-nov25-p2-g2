@@ -1,37 +1,35 @@
-import { render, screen } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing/react";
+import { render, screen } from "@testing-library/react";
 import Header from "@/components/Header";
 import { ProfileDocument } from "@/graphql/generated/schema";
 
-const profileMock = {   
-    request: {
-        query: ProfileDocument
+const profileMock = {
+  request: {
+    query: ProfileDocument,
+  },
+  result: {
+    data: {
+      me: null,
     },
-    result: {
-        data: {
-            me: null
-        }
-    }
+  },
 };
 
 jest.mock("next/router", () => ({
-    useRouter() {
-        return {
-            push: () => jest.fn()  // méthode utilisée Header
-        };
-    },
+  useRouter() {
+    return {
+      push: () => jest.fn(), // méthode utilisée Header
+    };
+  },
 }));
 
 describe("Header test", () => {
-  it("contains a img element in Header", async() => {
-    render(<MockedProvider mocks={[profileMock]}>
-      <Header user={null} />
-    </MockedProvider>);
+  it("contains a img element in Header", async () => {
+    render(
+      <MockedProvider mocks={[profileMock]}>
+        <Header user={null} refetch={async() => null} />
+      </MockedProvider>,
+    );
 
     expect(screen.queryByRole("img")).toBe(null);
-    // on teste là si on a un texte 'P2 template' dans notre rendu
-    // expect(screen.getByText("P2 template")).toBeInTheDocument();
-    // ici, on teste si notre h1 a un texte comportant 'P2 template'
-    // expect(screen.getByRole("heading", {level: 1})).toHaveTextContent("P2 template");
   });
 });

@@ -5,6 +5,8 @@ query childById($id: Int!) {
     lastName
     birthDate
     picture
-    group { name }
+    group {
+      name
+    }
   }
 }

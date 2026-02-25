@@ -6,8 +6,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
-  --color-primary: #F6DDE4;
-  --color-secondary: #D4EFFF;
+  --color-primary: #f6dde4;
+  --color-secondary: #d4efff;
 }
 
 body {
@@ -18,12 +18,12 @@ body {
 
 html,
 body,
-#__next {
-  height: 100%;
+#__next, .body {
+  min-height: 100vh; /* afin d'avoir une page de hauteur min de l'écran */
 }
 
 body,
-#__next {
+#__next, .body {
   margin: 0;
   display: flex;
   flex-direction: column;
@@ -51,7 +51,6 @@ main {
 .group1 {
   background-image: url("/orange.png");
   background-size: cover;
-  
 }
 
 .group2 {
@@ -64,26 +63,13 @@ main {
   background-size: cover;
 }
 
-
 :root {
   --bb-blue-border: #a5e1ff;
   --bb-text-blue: #2d5a9e;
   --bb-pink-border: #ffcce6;
 }
 
-html,
-body {
-  height: 100%;
-  margin: 0;
-  overflow: hidden; /* Supprime le scroll navigateur */
-}
-
-
 .bb-screen {
-  min-height: 100vh;
-  width: 100%;
-  background: url("/chateau.png") no-repeat center bottom;
-  background-size: cover;
   background-attachment: fixed;
   display: flex;
   justify-content: center;
@@ -121,7 +107,7 @@ body {
   border-radius: 20px;
   padding: 12px;
   text-align: center;
-  margin-bottom: 75px;
+  margin-bottom: 25px;
   box-shadow: 0 4px 10px rgba(165, 225, 255, 0.3);
 }
 
@@ -275,20 +261,6 @@ body {
   margin-top: 25px;
   padding: 0 10px;
 }
-
-/*.bb-btn-valider {
-  width: 100%;
-  background-color: #e1f5fe;
-  color: var(--bb-text-blue);
-  border: 2px solid var(--bb-blue-border);
-  border-radius: 50px;
-  padding: 12px;
-  font-size: 1.2rem;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s;
-}*/
 
 .bb-btn-valider:hover {
   background-color: #b3e5fc;

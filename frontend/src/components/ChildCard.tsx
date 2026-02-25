@@ -1,8 +1,13 @@
 import type React from "react";
-import type { Child } from "@/types/vite-env";
 
 type Props = {
-  child: Child;
+  child: {
+    firstName: string;
+    lastName: string;
+    birthDate: number;
+    picture: string;
+    group: { id: string; name: string };
+  };
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
 };
 

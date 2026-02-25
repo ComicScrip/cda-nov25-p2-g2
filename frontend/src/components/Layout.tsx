@@ -2,14 +2,13 @@ import { Poppins } from "next/font/google";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import type { ReactNode } from "react";
-import Header from "./Header";
-// import { useProfileQuery } from "@/graphql/generated/schema";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/hooks/CurrentProfile";
 import Footer from "./Footer";
+import Header from "./Header";
 
 const poppins = Poppins({
   display: "auto",
-  weight: ['100', '200', '300','400','500', '600', '700', '800', '900']
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
 });
 
 interface LayoutProps {
@@ -20,14 +19,32 @@ interface LayoutProps {
 export default function Layout({ children, pageTitle }: LayoutProps) {
   const router = useRouter();
 
-  // const { data } = useProfileQuery({
-  //   fetchPolicy: "cache-and-network",
-  // });
-  // const user = data?.me || null;
-  const { user, refreshMe } = useAuth();
-  
-  refreshMe();
+  const { user, refetch } = useAuth(); 
 
+/*
+  if (router.pathname === "/") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname === "/admin") {
+    body.classList.remove("group1", "group2", "group3", "md:staff-large");
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname === "/staff") {
+    body.classList.remove("home", "md:home-large");
+    body.classList.add(`group${user?.group?.id}`, "md:staff-large");
+  }
+
+  if (router.pathname === "/parent") {
+    body.classList.add("home", "md:home-large");
+  }
+
+  if (router.pathname.startsWith("/profil")) {
+    body.classList.add("home", "md:home-large");
+  }
+*/
   return (
     <>
       <Head>
@@ -36,15 +53,11 @@ export default function Layout({ children, pageTitle }: LayoutProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {user && <Header user={user} />}
-      <main className={`${poppins.className} 
-        ${(router.pathname === "/" && "home md:home-large" )}
-        ${(router.pathname === "/admin" && "home md:home-large" )}
-        ${(router.pathname === "/staff" && `group${user?.group?.id} md:staff-large` )}
-        ${(router.pathname === "/parent" && "home md:home-large" )} `} >
-        {children}
-      </main>
-      {user && <Footer />}
+      <div className={`body ${router.pathname === "/" ? "home md:home-large" : router.pathname.startsWith("/admin") ? "home md:home-large" : router.pathname.startsWith("/parent") ? "home md:home-page" : router.pathname.startsWith("/staff") ?  `group${user?.group?.id} md:staff-large` : router.pathname.startsWith("/profil") ? "home md:home-large": ""} `} >
+        {user && <Header user={user} refetch={refetch} />}
+        <main className={` ${poppins.className} `}>{children}</main>
+        {user && <Footer />}
+      </div>
     </>
   );
 }
