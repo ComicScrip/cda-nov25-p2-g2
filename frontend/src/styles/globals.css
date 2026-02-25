@@ -18,12 +18,12 @@ body {
 
 html,
 body,
-#__next {
+#__next, .body {
   min-height: 100vh; /* afin d'avoir une page de hauteur min de l'écran */
 }
 
 body,
-#__next {
+#__next, .body {
   margin: 0;
   display: flex;
   flex-direction: column;

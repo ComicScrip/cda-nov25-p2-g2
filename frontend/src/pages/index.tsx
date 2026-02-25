@@ -3,19 +3,19 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Layout from "@/components/Layout";
-import { type LoginInput, useLoginMutation, useProfileQuery } from "@/graphql/generated/schema";
+import { useAuth } from "@/hooks/CurrentProfile";
+import { type LoginInput, useLoginMutation } from "@/graphql/generated/schema";
 
 export default function Home() {
   const router = useRouter();
-  // hook pour récupération infos user connecté
-  const { data: dataProfile, refetch } = useProfileQuery({ fetchPolicy: "no-cache" });
-  const user = dataProfile?.me || null;
+  // hook 'useAuth' pour récupération infos user connecté
+  const { user, isAuthenticated, isAdmin, isStaff, isParent, refetch } = useAuth();
 
   // redirection en fn du role si logué
-  if (user) {
-    user.role == "admin" && router.push("/admin");
-    user.role == "staff" && router.push("/staff");
-    user.role == "parent" && router.push("/parent");
+  if (user && isAuthenticated) {
+    isAdmin && router.push("/admin");
+    isStaff && router.push("/staff");
+    isParent && router.push("/parent");
   }
 
   // hook pour login
@@ -38,7 +38,7 @@ export default function Home() {
     try {
       console.log("loginform is submitting");
       await login({ variables: { data } });
-      await refetch(); // récupération des données user MAJ pour avoir ensuite la redirection
+      await refetch(); // récupération des données user après connection, pour avoir ensuite la redirection
     } catch (err) {
       setErrorSubmit(true); // permet affichage erreur et sa disparition
       console.error(err);
