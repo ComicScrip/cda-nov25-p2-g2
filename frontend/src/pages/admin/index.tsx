@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import AddParentModal from "@/components/admin/AddParentModal";
 import Layout from "@/components/Layout";
 import { useAdminCountsQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/hooks/CurrentProfile";
@@ -11,7 +12,7 @@ export default function AdminDashboard() {
   const { data, loading: countsLoading } = useAdminCountsQuery({
     fetchPolicy: "network-only",
   });
-
+  const [openParentModal, setOpenParentModal] = useState(false);
   const counts = data?.adminCounts;
 
   useEffect(() => {
@@ -25,18 +26,7 @@ export default function AdminDashboard() {
 
   return (
     <Layout pageTitle="admin dashboard">
-      <div className="flex items-center justify-between">
-        <Image src="/babyboardlogo.png" alt="logo" width={150} height={40} priority />
-
-        <div className="flex items-center gap-3">
-          <Image src="/admin/cloche.png" alt="Notification" width={28} height={28} />
-
-          <div className="h-10 w-10 overflow-hidden rounded-full bg-white/80 shadow-sm border border-white">
-            <Image src="/admin/avatarfille.png" alt="Admin avatar" width={40} height={40} />
-          </div>
-        </div>
-      </div>
-      <div className="mx-auto w-full max-w-[620px]">
+      <div className="mx-auto w-full max-w-[620px] px-2">
         <p className="mt-6 text-center text-[14px] font-semibold">
           Bonjour {user?.first_name ?? "Admin"},
         </p>
@@ -44,7 +34,7 @@ export default function AdminDashboard() {
         <div className="mt-3 grid grid-cols-3 gap-4">
           <button
             className="
-    flex items-center gap-3
+    flex items-center gap-2
     border-2 border-(--color-primary)
     bg-white/80
     rounded-2xl
@@ -58,7 +48,7 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/childrenHistory")}
           >
-            <img src="/admin/bbavatar.png" className="w-16 h-16 object-contain" alt="Enfants" />
+            <Image src="/admin/bbavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Enfants" />
             <div className="text-left">
               <div className="text-[18px]">
                 {countsLoading ? "..." : (counts?.childrenCount ?? 0)}
@@ -69,7 +59,7 @@ export default function AdminDashboard() {
 
           <button
             className="
-    flex items-center gap-3
+    flex items-center gap-2
     border-2 border-(--color-primary)
     bg-white/80
     rounded-2xl
@@ -83,7 +73,7 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/staff")}
           >
-            <img src="/admin/staffavatar.png" className="w-16 h-16 object-contain" />
+            <Image src="/admin/staffavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Staff" />
             <div className="text-left">
               <div className="text-[18px]">{countsLoading ? "..." : (counts?.staffCount ?? 0)}</div>
               <div className="text-[12px]">Staff</div>
@@ -92,7 +82,7 @@ export default function AdminDashboard() {
 
           <button
             className="
-    flex items-center gap-3
+    flex items-center gap-2
     border-2 border-(--color-primary)
     bg-white/80
     rounded-2xl
@@ -106,7 +96,7 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/parents")}
           >
-            <img src="/admin/parentavatar.png" className="w-16 h-16 object-contain" />
+            <Image src="/admin/parentavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Parents" />
             <div className="text-left">
               <div className="text-[18px]">
                 {countsLoading ? "..." : (counts?.parentCount ?? 0)}
@@ -137,13 +127,9 @@ export default function AdminDashboard() {
               >
                 +
               </span>
-              <div className="flex items-center gap-3 h-full">
+              <div className="flex items-center gap-6 h-full">
                 <div className="h-10 w-10 flex items-center justify-center">
-                  <img
-                    src="/admin/bbavatar.png"
-                    className="w-16 h-16 object-contain"
-                    alt="Enfants"
-                  />
+                  <Image src="/admin/bbavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Enfants" />
                 </div>
                 <div className="text-left text-[12px] leading-tight">
                   Ajouter <br /> un enfant
@@ -167,9 +153,9 @@ export default function AdminDashboard() {
               >
                 +
               </span>
-              <div className="flex items-center gap-3 h-full">
+              <div className="flex items-center gap-6 h-full">
                 <div className="h-10 w-10 flex items-center justify-center">
-                  <img src="/admin/staffavatar.png" className="w-16 h-16 object-contain" />
+                  <Image src="/admin/staffavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Staff" />
                 </div>
                 <div className="text-left text-[12px] leading-tight">
                   Ajouter <br /> un membre <br /> du staff
@@ -180,7 +166,15 @@ export default function AdminDashboard() {
             {/* Parent */}
             <div className="col-span-2 flex justify-center">
               <div className="w-[50%]">
-                <button className="relative w-full h-[85px] rounded-2xl bg-white/70 border-2 border-[#BFE7FF] px-4 py-3 shadow-sm">
+                <button
+                  onClick={() => setOpenParentModal(true)}
+                  className="relative w-full h-[85px] rounded-2xl bg-white/70 border-2 border-[#BFE7FF] px-4 py-3 shadow-sm     transition-all duration-200
+                    hover:shadow-md
+                    hover:scale-[1.03]
+                    active:scale-95
+                    focus:outline-none
+                    "
+                >
                   <span
                     className="
     absolute -top-2 -right-2
@@ -195,9 +189,9 @@ export default function AdminDashboard() {
                   >
                     +
                   </span>
-                  <div className="flex items-center gap-3 h-full">
+                  <div className="flex items-center gap-6 h-full">
                     <div className="h-10 w-10 flex items-center justify-center">
-                      <img src="/admin/parentavatar.png" className="w-16 h-16 object-contain" />
+                      <Image src="/admin/parentavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Parents" />
                     </div>
                     <div className="text-left text-[12px] leading-tight">
                       Ajouter <br /> un parent
@@ -217,6 +211,7 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
+      <AddParentModal open={openParentModal} onClose={() => setOpenParentModal(false)} />
     </Layout>
   );
 }
