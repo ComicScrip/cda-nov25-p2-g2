@@ -18,6 +18,8 @@ const db = new DataSource({
   //logging: true,
 });
 
+console.log(db);
+
 export async function clearDB() {
   const runner = db.createQueryRunner();
   const tableDroppings = db.entityMetadatas.map((entity) =>
