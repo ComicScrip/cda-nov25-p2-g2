@@ -1,11 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  useAllChildrenQuery,
-  useCreateUserMutation,
-  useLinkParentToChildMutation,
-} from "@/graphql/generated/schema";
+import { useAllGroupsQuery, useCreateUserMutation } from "@/graphql/generated/schema";
 
 type Props = {
   open: boolean;
@@ -19,7 +15,7 @@ type FormValues = {
   phone: string;
 };
 
-export default function AddParentModal({ open, onClose }: Props) {
+export default function AddStaffModal({ open, onClose }: Props) {
   const {
     register,
     handleSubmit,
@@ -27,49 +23,36 @@ export default function AddParentModal({ open, onClose }: Props) {
     formState: { errors },
   } = useForm<FormValues>();
   const [createUser] = useCreateUserMutation();
-  const [linkParentToChild] = useLinkParentToChildMutation();
-  const { data: childrenData } = useAllChildrenQuery({ fetchPolicy: "network-only" });
+  const { data: groupsData } = useAllGroupsQuery();
 
   const [success, setSuccess] = useState(false);
-
-  const [search, setSearch] = useState("");
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedChildIds, setSelectedChildIds] = useState<number[]>([]);
+  const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
+  const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
+  const [groupError, setGroupError] = useState(false);
 
   const onSubmit = async (values: FormValues) => {
+    if (!selectedGroupId) {
+      setGroupError(true);
+      return;
+    }
+    setGroupError(false);
     // a faire : supprimer, quand le stysteme de mail sera en place
     const tempPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 12) + "A1!";
-    // crypto.randomUUID()          → "a3f8c2d1-9b4e-4f7a-8c2d-1b3e5f7a9c2d"
     //.replace(/-/g, "")           → "a3f8c2d19b4e4f7a8c2d1b3e5f7a9c2d"
     //.slice(0, 12)                → "a3f8c2d19b4e"   (12 chars minuscules + chiffres)
     //+ "A1!"                      → "a3f8c2d19b4eA1!"  valide
-    const result = await createUser({
+    await createUser({
       variables: {
-        data: { ...values, password: tempPassword, role: "parent", group_id: null },
+        data: { ...values, password: tempPassword, role: "staff", group_id: selectedGroupId },
       },
       refetchQueries: ["AdminCounts"],
     });
 
-    const newParentId = result.data?.createUser.id;
-    if (!newParentId) return;
-    for (const child of childrenData?.children ?? []) {
-      if (selectedChildIds.includes(child.id)) {
-        const existingParentIds = child.parents.map((p) => ({ id: p.id }));
-        await linkParentToChild({
-          variables: {
-            id: child.id,
-            data: { parents: [...existingParentIds, { id: newParentId }] },
-          },
-        });
-      }
-    }
-    console.log("Create parent:", values);
-
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
-      setSearch("");
-      setDropdownOpen(false);
+      setSelectedGroupId(null);
+      setGroupDropdownOpen(false);
       reset();
       onClose();
     }, 2000);
@@ -80,8 +63,7 @@ export default function AddParentModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <button
-        className="absolute inset-0 bg-black/20 backdrop-blur-[2px]
-"
+        className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
         onClick={onClose}
         aria-label="Fermer la modal"
       />
@@ -97,7 +79,10 @@ export default function AddParentModal({ open, onClose }: Props) {
             height={80}
             className="rounded-full"
           />
-          <h2 className="text-[16px] font-semibold">Ajouter un parent</h2>
+          <h2 className="text-[16px] font-semibold">
+            Ajouter un membre <br />
+            du staff
+          </h2>
         </div>
 
         {/* Form */}
@@ -161,109 +146,79 @@ export default function AddParentModal({ open, onClose }: Props) {
             />
             {errors.phone && <p className="text-[11px] text-red-500">{errors.phone.message}</p>}
           </div>
-          {/* Enfants liés */}
+
+          {/* Groupe */}
           <div>
-            <p className="text-[13px] font-medium mb-1">Enfants liés</p>
+            <p className="text-[13px] font-medium mb-1">Groupe*</p>
 
             {/* Bouton */}
             <button
               type="button"
-              onClick={() => setDropdownOpen((prev) => !prev)}
-              className="w-full rounded-xl border-2 border-(--color-primary) bg-white px-3 py-1.5 text-[12px] text-left outline-none flex justify-between items-center"
+              onClick={() => setGroupDropdownOpen((prev) => !prev)}
+              className={`w-full rounded-xl border-2 bg-white px-3 py-1.5 text-[12px] text-left outline-none flex justify-between items-center ${groupError ? "border-red-400" : "border-(--color-primary)"}`}
             >
               <span className="text-gray-400">
-                {selectedChildIds.length === 0
-                  ? "Ajouter un enfant"
-                  : `${selectedChildIds.length} enfant(s) sélectionné(s)`}
+                {selectedGroupId ? "1 groupe sélectionné" : "Sélectionner un groupe"}
               </span>
               <span
-                className={`transition-transform duration-200 text-gray-400 ${dropdownOpen ? "rotate-180" : ""}`}
+                className={`transition-transform duration-200 text-gray-400 ${groupDropdownOpen ? "rotate-180" : ""}`}
               >
                 ▾
               </span>
             </button>
 
             {/* Accordéon */}
-            {dropdownOpen && (
+            {groupDropdownOpen && (
               <div className="mt-1 rounded-xl border-2 border-(--color-primary) bg-white overflow-hidden">
-                {/* Recherche */}
-                <div className="p-2 border-b border-gray-100">
-                  <input
-                    type="text"
-                    placeholder="Rechercher..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    className="w-full rounded-lg border border-gray-200 px-2 py-1 text-[12px] outline-none"
-                  />
-                </div>
-                {/* Liste scrollable */}
-                <div className="max-h-24 overflow-y-auto">
-                  {childrenData?.children
-                    .filter((child) =>
-                      `${child.firstName} ${child.lastName}`
-                        .toLowerCase()
-                        .includes(search.toLowerCase()),
-                    )
-                    .map((child) => (
-                      <label
-                        key={child.id}
-                        className="flex items-center gap-2 px-3 py-2 text-[12px] hover:bg-orange-50 cursor-pointer border-b border-gray-50 last:border-0"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedChildIds.includes(child.id)}
-                          onChange={(e) =>
-                            setSelectedChildIds((prev) =>
-                              e.target.checked
-                                ? [...prev, child.id]
-                                : prev.filter((id) => id !== child.id),
-                            )
-                          }
-                        />
-                        {child.firstName} {child.lastName}
-                      </label>
-                    ))}
-                </div>
+                {groupsData?.getAllGroups.map((g) => (
+                  <button
+                    key={g.id}
+                    type="button"
+                    onClick={() => {
+                      setSelectedGroupId(Number(g.id));
+                      setGroupDropdownOpen(false);
+                      setGroupError(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 text-[12px] border-b border-gray-50 last:border-0 hover:bg-orange-50 ${selectedGroupId === Number(g.id) ? "font-semibold" : ""}`}
+                  >
+                    {g.name}
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Tags */}
-            {selectedChildIds.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2 max-h-[60px] overflow-y-auto">
-                {childrenData?.children
-                  .filter((child) => selectedChildIds.includes(child.id))
-                  .map((child) => (
-                    <span
-                      key={child.id}
-                      className="flex items-center gap-1 rounded-full bg-white border border-(--color-secondary) px-2 py-0.5 text-[11px]"
-                    >
-                      {child.firstName} {child.lastName}
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setSelectedChildIds((prev) => prev.filter((id) => id !== child.id))
-                        }
-                        className="hover:opacity-60"
-                      >
-                        ×
-                      </button>
-                    </span>
-                  ))}
+            {/* Tag groupe sélectionné */}
+            {selectedGroupId && (
+              <div className="mt-2">
+                <span className="flex items-center gap-1 rounded-full bg-white border border-(--color-secondary) px-2 py-0.5 text-[11px] w-fit">
+                  {groupsData?.getAllGroups.find((g) => Number(g.id) === selectedGroupId)?.name}
+                  <button
+                    type="button"
+                    onClick={() => setSelectedGroupId(null)}
+                    className="hover:opacity-60"
+                  >
+                    ×
+                  </button>
+                </span>
               </div>
             )}
+
+            {groupError && <p className="text-[11px] text-red-500">Champ requis</p>}
           </div>
+
           {success && (
             <p className="text-center text-[12px] text-green-600 font-medium py-1">
-              ✓ Parent créé avec succès !
+              ✓ Membre du staff créé avec succès !
             </p>
           )}
 
           {/* Buttons */}
-          <div className="mt-6 flex justify-between gap-4">
+          <div className="mt-2 flex justify-between gap-4">
             <button
               type="button"
               onClick={() => {
                 reset();
+                setSelectedGroupId(null);
                 onClose();
               }}
               className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
@@ -275,7 +230,7 @@ export default function AddParentModal({ open, onClose }: Props) {
               type="submit"
               className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
             >
-              Créer parent
+              Créer staff
             </button>
           </div>
         </form>

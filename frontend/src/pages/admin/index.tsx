@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import AddChildModal from "@/components/admin/AddChildModal";
 import AddParentModal from "@/components/admin/AddParentModal";
+import AddStaffModal from "@/components/admin/AddStaffModal";
 import Layout from "@/components/Layout";
 import { useAdminCountsQuery } from "@/graphql/generated/schema";
 import { useAuth } from "@/hooks/CurrentProfile";
@@ -15,6 +16,7 @@ export default function AdminDashboard() {
   });
   const [openParentModal, setOpenParentModal] = useState(false);
   const [openChildModal, setOpenChildModal] = useState(false);
+  const [openStaffModal, setOpenStaffModal] = useState(false);
   const counts = data?.adminCounts;
 
   useEffect(() => {
@@ -50,7 +52,13 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/childrenHistory")}
           >
-            <Image src="/admin/bbavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Enfants" />
+            <Image
+              src="/admin/bbavatar.png"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain"
+              alt="Enfants"
+            />
             <div className="text-left">
               <div className="text-[18px]">
                 {countsLoading ? "..." : (counts?.childrenCount ?? 0)}
@@ -75,7 +83,13 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/staff")}
           >
-            <Image src="/admin/staffavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Staff" />
+            <Image
+              src="/admin/staffavatar.png"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain"
+              alt="Staff"
+            />
             <div className="text-left">
               <div className="text-[18px]">{countsLoading ? "..." : (counts?.staffCount ?? 0)}</div>
               <div className="text-[12px]">Staff</div>
@@ -98,7 +112,13 @@ export default function AdminDashboard() {
   "
             onClick={() => router.push("/admin/parents")}
           >
-            <Image src="/admin/parentavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Parents" />
+            <Image
+              src="/admin/parentavatar.png"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain"
+              alt="Parents"
+            />
             <div className="text-left">
               <div className="text-[18px]">
                 {countsLoading ? "..." : (counts?.parentCount ?? 0)}
@@ -114,7 +134,10 @@ export default function AdminDashboard() {
 
           <div className="mt-4 grid grid-cols-2 gap-4">
             {/* Enfant */}
-            <button onClick={() => setOpenChildModal(true)} className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95">
+            <button
+              onClick={() => setOpenChildModal(true)}
+              className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
+            >
               <span
                 className="
     absolute -top-2 -right-2
@@ -131,7 +154,13 @@ export default function AdminDashboard() {
               </span>
               <div className="flex items-center gap-6 h-full">
                 <div className="h-10 w-10 flex items-center justify-center">
-                  <Image src="/admin/bbavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Enfants" />
+                  <Image
+                    src="/admin/bbavatar.png"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain"
+                    alt="Enfants"
+                  />
                 </div>
                 <div className="text-left text-[12px] leading-tight">
                   Ajouter <br /> un enfant
@@ -140,7 +169,10 @@ export default function AdminDashboard() {
             </button>
 
             {/* Staff */}
-            <button className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm">
+            <button
+              onClick={() => setOpenStaffModal(true)}
+              className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
+            >
               <span
                 className="
     absolute -top-2 -right-2
@@ -157,7 +189,13 @@ export default function AdminDashboard() {
               </span>
               <div className="flex items-center gap-6 h-full">
                 <div className="h-10 w-10 flex items-center justify-center">
-                  <Image src="/admin/staffavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Staff" />
+                  <Image
+                    src="/admin/staffavatar.png"
+                    width={64}
+                    height={64}
+                    className="w-16 h-16 object-contain"
+                    alt="Staff"
+                  />
                 </div>
                 <div className="text-left text-[12px] leading-tight">
                   Ajouter <br /> un membre <br /> du staff
@@ -193,7 +231,13 @@ export default function AdminDashboard() {
                   </span>
                   <div className="flex items-center gap-6 h-full">
                     <div className="h-10 w-10 flex items-center justify-center">
-                      <Image src="/admin/parentavatar.png" width={64} height={64} className="w-16 h-16 object-contain" alt="Parents" />
+                      <Image
+                        src="/admin/parentavatar.png"
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 object-contain"
+                        alt="Parents"
+                      />
                     </div>
                     <div className="text-left text-[12px] leading-tight">
                       Ajouter <br /> un parent
@@ -215,6 +259,7 @@ export default function AdminDashboard() {
       </div>
       <AddChildModal open={openChildModal} onClose={() => setOpenChildModal(false)} />
       <AddParentModal open={openParentModal} onClose={() => setOpenParentModal(false)} />
+      <AddStaffModal open={openStaffModal} onClose={() => setOpenStaffModal(false)} />
     </Layout>
   );
 }

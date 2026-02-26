@@ -395,12 +395,12 @@ export type CreateChildMutationVariables = Exact<{
 
 export type CreateChildMutation = { __typename?: 'Mutation', createChild: { __typename?: 'Child', id: number, firstName: string, lastName: string, birthDate: any, picture: string, healthRecord?: string | null, group: { __typename?: 'Group', id: string, name: string } } };
 
-export type CreateParentMutationVariables = Exact<{
+export type CreateUserMutationVariables = Exact<{
   data: CreateUserInput;
 }>;
 
 
-export type CreateParentMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: number, email: string, first_name: string, last_name: string, phone: string, role: string } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: number, email: string, first_name: string, last_name: string, phone: string, role: string } };
 
 export type LinkParentToChildMutationVariables = Exact<{
   id: Scalars['Int']['input'];
@@ -626,8 +626,8 @@ export function useCreateChildMutation(baseOptions?: ApolloReactHooks.MutationHo
 export type CreateChildMutationHookResult = ReturnType<typeof useCreateChildMutation>;
 export type CreateChildMutationResult = ApolloReactCommon.MutationResult<CreateChildMutation>;
 export type CreateChildMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateChildMutation, CreateChildMutationVariables>;
-export const CreateParentDocument = gql`
-    mutation CreateParent($data: CreateUserInput!) {
+export const CreateUserDocument = gql`
+    mutation CreateUser($data: CreateUserInput!) {
   createUser(data: $data) {
     id
     email
@@ -638,32 +638,32 @@ export const CreateParentDocument = gql`
   }
 }
     `;
-export type CreateParentMutationFn = ApolloReactCommon.MutationFunction<CreateParentMutation, CreateParentMutationVariables>;
+export type CreateUserMutationFn = ApolloReactCommon.MutationFunction<CreateUserMutation, CreateUserMutationVariables>;
 
 /**
- * __useCreateParentMutation__
+ * __useCreateUserMutation__
  *
- * To run a mutation, you first call `useCreateParentMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useCreateParentMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateUserMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateUserMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [createParentMutation, { data, loading, error }] = useCreateParentMutation({
+ * const [createUserMutation, { data, loading, error }] = useCreateUserMutation({
  *   variables: {
  *      data: // value for 'data'
  *   },
  * });
  */
-export function useCreateParentMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateParentMutation, CreateParentMutationVariables>) {
+export function useCreateUserMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<CreateUserMutation, CreateUserMutationVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useMutation<CreateParentMutation, CreateParentMutationVariables>(CreateParentDocument, options);
+        return ApolloReactHooks.useMutation<CreateUserMutation, CreateUserMutationVariables>(CreateUserDocument, options);
       }
-export type CreateParentMutationHookResult = ReturnType<typeof useCreateParentMutation>;
-export type CreateParentMutationResult = ApolloReactCommon.MutationResult<CreateParentMutation>;
-export type CreateParentMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateParentMutation, CreateParentMutationVariables>;
+export type CreateUserMutationHookResult = ReturnType<typeof useCreateUserMutation>;
+export type CreateUserMutationResult = ApolloReactCommon.MutationResult<CreateUserMutation>;
+export type CreateUserMutationOptions = ApolloReactCommon.BaseMutationOptions<CreateUserMutation, CreateUserMutationVariables>;
 export const LinkParentToChildDocument = gql`
     mutation LinkParentToChild($id: Int!, $data: UpdateChildInput!) {
   updateAd(id: $id, data: $data) {
