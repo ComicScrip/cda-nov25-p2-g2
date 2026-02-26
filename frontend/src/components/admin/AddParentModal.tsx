@@ -24,52 +24,68 @@ export default function AddParentModal({ open, onClose }: Props) {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>();
   const [createUser] = useCreateUserMutation();
   const [linkParentToChild] = useLinkParentToChildMutation();
   const { data: childrenData } = useAllChildrenQuery({ fetchPolicy: "network-only" });
 
   const [success, setSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
 
   const [search, setSearch] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [selectedChildIds, setSelectedChildIds] = useState<number[]>([]);
 
   const onSubmit = async (values: FormValues) => {
+    setServerError("");
     // a faire : supprimer, quand le stysteme de mail sera en place
     const tempPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 12) + "A1!";
-    // crypto.randomUUID()          → "a3f8c2d1-9b4e-4f7a-8c2d-1b3e5f7a9c2d"
-    //.replace(/-/g, "")           → "a3f8c2d19b4e4f7a8c2d1b3e5f7a9c2d"
-    //.slice(0, 12)                → "a3f8c2d19b4e"   (12 chars minuscules + chiffres)
-    //+ "A1!"                      → "a3f8c2d19b4eA1!"  valide
-    const result = await createUser({
-      variables: {
-        data: { ...values, password: tempPassword, role: "parent", group_id: null },
-      },
-      refetchQueries: ["AdminCounts"],
-    });
-
-    const newParentId = result.data?.createUser.id;
-    if (!newParentId) return;
-    for (const child of childrenData?.children ?? []) {
-      if (selectedChildIds.includes(child.id)) {
-        const existingParentIds = child.parents.map((p) => ({ id: p.id }));
-        await linkParentToChild({
-          variables: {
-            id: child.id,
-            data: { parents: [...existingParentIds, { id: newParentId }] },
-          },
-        });
-      }
+    //.replace(/-/g, "")="a3f8c2d19b4e4f7a8c2d1b3e5f7a9c2d"
+    //.slice(0, 12)="a3f8c2d19b4e"(12 chars minuscules + chiffres)
+    //+ "A1!"="a3f8c2d19b4eA1!" valide
+    let newParentId: number | undefined;
+    try {
+      const result = await createUser({
+        variables: {
+          data: { ...values, password: tempPassword, role: "parent", group_id: null },
+        },
+        refetchQueries: ["AdminCounts"],
+      });
+      newParentId = result.data?.createUser.id;
+    } catch {
+      setServerError("Une erreur est survenue. Vérifiez les informations.");
+      return;
     }
-    console.log("Create parent:", values);
+
+    if (!newParentId) {
+      setServerError("Une erreur est survenue. Vérifiez les informations.");
+      return;
+    }
+    try {
+      for (const child of childrenData?.children ?? []) {
+        if (selectedChildIds.includes(child.id)) {
+          const existingParentIds = child.parents.map((p) => ({ id: p.id }));
+          await linkParentToChild({
+            variables: {
+              id: child.id,
+              data: { parents: [...existingParentIds, { id: newParentId }] },
+            },
+          });
+        }
+      }
+    } catch {
+      setServerError("Le parent a été créé mais un lien avec un enfant a échoué.");
+      return;
+    }
 
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
       setSearch("");
       setDropdownOpen(false);
+      setSelectedChildIds([]);
+      setServerError("");
       reset();
       onClose();
     }, 2000);
@@ -80,9 +96,8 @@ export default function AddParentModal({ open, onClose }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <button
-        className="absolute inset-0 bg-black/20 backdrop-blur-[2px]
-"
-        onClick={onClose}
+        className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
+        onClick={() => { reset(); setServerError(""); setSelectedChildIds([]); setSearch(""); setDropdownOpen(false); onClose(); }}
         aria-label="Fermer la modal"
       />
 
@@ -257,6 +272,11 @@ export default function AddParentModal({ open, onClose }: Props) {
               ✓ Parent créé avec succès !
             </p>
           )}
+          {serverError && (
+            <p className="text-center text-[12px] text-red-500 font-medium py-1">
+              {serverError}
+            </p>
+          )}
 
           {/* Buttons */}
           <div className="mt-6 flex justify-between gap-4">
@@ -264,6 +284,10 @@ export default function AddParentModal({ open, onClose }: Props) {
               type="button"
               onClick={() => {
                 reset();
+                setServerError("");
+                setSelectedChildIds([]);
+                setSearch("");
+                setDropdownOpen(false);
                 onClose();
               }}
               className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
@@ -273,9 +297,10 @@ export default function AddParentModal({ open, onClose }: Props) {
 
             <button
               type="submit"
-              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
+              disabled={isSubmitting}
+              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
             >
-              Créer parent
+              {isSubmitting ? "Création..." : "Créer parent"}
             </button>
           </div>
         </form>

@@ -1,10 +1,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import {
-  useCreateChildMutation,
-  useAllGroupsQuery,
-} from "@/graphql/generated/schema";
+import { useAllGroupsQuery, useCreateChildMutation } from "@/graphql/generated/schema";
 
 type Props = {
   open: boolean;
@@ -26,7 +23,7 @@ export default function AddChildModal({ open, onClose }: Props) {
     handleSubmit,
     reset,
     watch,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>();
 
   const birthDateValue = watch("birthDate");
@@ -35,6 +32,7 @@ export default function AddChildModal({ open, onClose }: Props) {
   const { data: groupsData } = useAllGroupsQuery();
 
   const [success, setSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [groupError, setGroupError] = useState(false);
@@ -45,24 +43,34 @@ export default function AddChildModal({ open, onClose }: Props) {
       return;
     }
     setGroupError(false);
-    await createChild({
-      variables: {
-        data: {
-          firstName: values.firstName,
-          lastName: values.lastName,
-          birthDate: new Date(values.birthDate),
-          group: { id: selectedGroupId },
-          healthRecord: values.healthRecord || null,
-          picture: DEFAULT_PICTURE,
-          parents: [],
+    setServerError("");
+    try {
+      await createChild({
+        variables: {
+          data: {
+            firstName: values.firstName,
+            lastName: values.lastName,
+            birthDate: new Date(values.birthDate),
+            group: { id: selectedGroupId },
+            healthRecord: values.healthRecord || null,
+            picture: DEFAULT_PICTURE,
+            parents: [],
+          },
         },
-      },
-      refetchQueries: ["AdminCounts", "AllChildren"], // Refetch pour mettre à jour les stats et la liste des enfants
-    });
+        refetchQueries: ["AdminCounts", "AllChildren"], // Refetch pour mettre à jour les stats et la liste des enfants
+      });
+    } catch {
+      setServerError("Une erreur est survenue. Vérifiez les informations.");
+      return;
+    }
 
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
+      setSelectedGroupId(null);
+      setGroupDropdownOpen(false);
+      setGroupError(false);
+      setServerError("");
       reset();
       onClose();
     }, 2000);
@@ -74,7 +82,7 @@ export default function AddChildModal({ open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <button
         className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
-        onClick={onClose}
+        onClick={() => { reset(); setServerError(""); setSelectedGroupId(null); setGroupDropdownOpen(false); setGroupError(false); onClose(); }}
         aria-label="Fermer la modal"
       />
 
@@ -156,7 +164,9 @@ export default function AddChildModal({ open, onClose }: Props) {
               <span className="text-gray-400">
                 {selectedGroupId ? "1 groupe sélectionné" : "Sélectionner un groupe"}
               </span>
-              <span className={`transition-transform duration-200 text-gray-400 ${groupDropdownOpen ? "rotate-180" : ""}`}>
+              <span
+                className={`transition-transform duration-200 text-gray-400 ${groupDropdownOpen ? "rotate-180" : ""}`}
+              >
                 ▾
               </span>
             </button>
@@ -197,9 +207,7 @@ export default function AddChildModal({ open, onClose }: Props) {
               </div>
             )}
 
-            {groupError && (
-              <p className="text-[11px] text-red-500">Champ requis</p>
-            )}
+            {groupError && <p className="text-[11px] text-red-500">Champ requis</p>}
           </div>
 
           {/* Dossier de santé */}
@@ -216,10 +224,14 @@ export default function AddChildModal({ open, onClose }: Props) {
             />
           </div>
 
-          {/* Message succès */}
           {success && (
             <p className="text-center text-[12px] text-green-600 font-medium py-1">
               ✓ Enfant créé avec succès !
+            </p>
+          )}
+          {serverError && (
+            <p className="text-center text-[12px] text-red-500 font-medium py-1">
+              {serverError}
             </p>
           )}
 
@@ -229,6 +241,10 @@ export default function AddChildModal({ open, onClose }: Props) {
               type="button"
               onClick={() => {
                 reset();
+                setServerError("");
+                setSelectedGroupId(null);
+                setGroupDropdownOpen(false);
+                setGroupError(false);
                 onClose();
               }}
               className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
@@ -237,9 +253,10 @@ export default function AddChildModal({ open, onClose }: Props) {
             </button>
             <button
               type="submit"
-              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
+              disabled={isSubmitting}
+              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
             >
-              Créer enfant
+              {isSubmitting ? "Création..." : "Créer enfant"}
             </button>
           </div>
         </form>

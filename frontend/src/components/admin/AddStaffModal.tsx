@@ -20,12 +20,13 @@ export default function AddStaffModal({ open, onClose }: Props) {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<FormValues>();
   const [createUser] = useCreateUserMutation();
   const { data: groupsData } = useAllGroupsQuery();
 
   const [success, setSuccess] = useState(false);
+  const [serverError, setServerError] = useState("");
   const [groupDropdownOpen, setGroupDropdownOpen] = useState(false);
   const [selectedGroupId, setSelectedGroupId] = useState<number | null>(null);
   const [groupError, setGroupError] = useState(false);
@@ -36,23 +37,31 @@ export default function AddStaffModal({ open, onClose }: Props) {
       return;
     }
     setGroupError(false);
+    setServerError("");
     // a faire : supprimer, quand le stysteme de mail sera en place
     const tempPassword = crypto.randomUUID().replace(/-/g, "").slice(0, 12) + "A1!";
-    //.replace(/-/g, "")           → "a3f8c2d19b4e4f7a8c2d1b3e5f7a9c2d"
-    //.slice(0, 12)                → "a3f8c2d19b4e"   (12 chars minuscules + chiffres)
-    //+ "A1!"                      → "a3f8c2d19b4eA1!"  valide
-    await createUser({
-      variables: {
-        data: { ...values, password: tempPassword, role: "staff", group_id: selectedGroupId },
-      },
-      refetchQueries: ["AdminCounts"],
-    });
+    //.replace(/-/g, "")="a3f8c2d19b4e4f7a8c2d1b3e5f7a9c2d"
+    //.slice(0, 12)="a3f8c2d19b4e"(12 chars minuscules + chiffres)
+    //+ "A1!"="a3f8c2d19b4eA1!" valide
+    try {
+      await createUser({
+        variables: {
+          data: { ...values, password: tempPassword, role: "staff", group_id: selectedGroupId },
+        },
+        refetchQueries: ["AdminCounts"],
+      });
+    } catch {
+      setServerError("Une erreur est survenue. Vérifiez les informations.");
+      return;
+    }
 
     setSuccess(true);
     setTimeout(() => {
       setSuccess(false);
       setSelectedGroupId(null);
       setGroupDropdownOpen(false);
+      setGroupError(false);
+      setServerError("");
       reset();
       onClose();
     }, 2000);
@@ -64,7 +73,7 @@ export default function AddStaffModal({ open, onClose }: Props) {
     <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
       <button
         className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
-        onClick={onClose}
+        onClick={() => { reset(); setServerError(""); setSelectedGroupId(null); setGroupDropdownOpen(false); setGroupError(false); onClose(); }}
         aria-label="Fermer la modal"
       />
 
@@ -211,6 +220,11 @@ export default function AddStaffModal({ open, onClose }: Props) {
               ✓ Membre du staff créé avec succès !
             </p>
           )}
+          {serverError && (
+            <p className="text-center text-[12px] text-red-500 font-medium py-1">
+              {serverError}
+            </p>
+          )}
 
           {/* Buttons */}
           <div className="mt-2 flex justify-between gap-4">
@@ -219,6 +233,9 @@ export default function AddStaffModal({ open, onClose }: Props) {
               onClick={() => {
                 reset();
                 setSelectedGroupId(null);
+                setGroupDropdownOpen(false);
+                setGroupError(false);
+                setServerError("");
                 onClose();
               }}
               className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
@@ -228,9 +245,10 @@ export default function AddStaffModal({ open, onClose }: Props) {
 
             <button
               type="submit"
-              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
+              disabled={isSubmitting}
+              className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-1 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
             >
-              Créer staff
+              {isSubmitting ? "Création..." : "Créer staff"}
             </button>
           </div>
         </form>
