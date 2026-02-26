@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import AddChildModal from "@/components/admin/AddChildModal";
 import AddParentModal from "@/components/admin/AddParentModal";
 import Layout from "@/components/Layout";
 import { useAdminCountsQuery } from "@/graphql/generated/schema";
@@ -13,6 +14,7 @@ export default function AdminDashboard() {
     fetchPolicy: "network-only",
   });
   const [openParentModal, setOpenParentModal] = useState(false);
+  const [openChildModal, setOpenChildModal] = useState(false);
   const counts = data?.adminCounts;
 
   useEffect(() => {
@@ -112,7 +114,7 @@ export default function AdminDashboard() {
 
           <div className="mt-4 grid grid-cols-2 gap-4">
             {/* Enfant */}
-            <button className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm">
+            <button onClick={() => setOpenChildModal(true)} className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95">
               <span
                 className="
     absolute -top-2 -right-2
@@ -168,7 +170,7 @@ export default function AdminDashboard() {
               <div className="w-[50%]">
                 <button
                   onClick={() => setOpenParentModal(true)}
-                  className="relative w-full h-[85px] rounded-2xl bg-white/70 border-2 border-[#BFE7FF] px-4 py-3 shadow-sm     transition-all duration-200
+                  className="relative w-full h-[85px] rounded-2xl bg-white/70 border-2 border-(--color-secondary) px-4 py-3 shadow-sm     transition-all duration-200
                     hover:shadow-md
                     hover:scale-[1.03]
                     active:scale-95
@@ -211,6 +213,7 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
+      <AddChildModal open={openChildModal} onClose={() => setOpenChildModal(false)} />
       <AddParentModal open={openParentModal} onClose={() => setOpenParentModal(false)} />
     </Layout>
   );
