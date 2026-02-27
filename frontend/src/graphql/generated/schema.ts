@@ -386,12 +386,6 @@ export type AdminCountsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type AdminCountsQuery = { __typename?: 'Query', adminCounts: { __typename?: 'AdminCounts', childrenCount: number, staffCount: number, parentCount: number } };
 
-export type GetAllPlanningsByGroupQueryVariables = Exact<{
-  groupId: Scalars['Int']['input'];
-}>;
-
-
-export type GetAllPlanningsByGroupQuery = { __typename?: 'Query', getAllPlanningsByGroup: Array<{ __typename?: 'Planning', id: string, date: any, morning_activities?: string | null, morning_nap?: string | null, meal?: string | null, afternoon_activities?: string | null, afternoon_nap?: string | null, snack?: string | null }> };
 export type AllChildrenQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -423,6 +417,13 @@ export type LinkParentToChildMutationVariables = Exact<{
 
 
 export type LinkParentToChildMutation = { __typename?: 'Mutation', updateAd: { __typename?: 'Child', id: number, parents: Array<{ __typename?: 'User', id: number }> } };
+
+export type GetAllPlanningsByGroupQueryVariables = Exact<{
+  groupId: Scalars['Int']['input'];
+}>;
+
+
+export type GetAllPlanningsByGroupQuery = { __typename?: 'Query', getAllPlanningsByGroup: Array<{ __typename?: 'Planning', id: string, date: any, morning_activities?: string | null, morning_nap?: string | null, meal?: string | null, afternoon_activities?: string | null, afternoon_nap?: string | null, snack?: string | null }> };
 
 export type ChangePasswordMutationVariables = Exact<{
   data: ChangePasswordInput;
@@ -529,26 +530,6 @@ export type AdminCountsQueryHookResult = ReturnType<typeof useAdminCountsQuery>;
 export type AdminCountsLazyQueryHookResult = ReturnType<typeof useAdminCountsLazyQuery>;
 export type AdminCountsSuspenseQueryHookResult = ReturnType<typeof useAdminCountsSuspenseQuery>;
 export type AdminCountsQueryResult = ApolloReactCommon.QueryResult<AdminCountsQuery, AdminCountsQueryVariables>;
-export const GetAllPlanningsByGroupDocument = gql`
-    query getAllPlanningsByGroup($groupId: Int!) {
-  getAllPlanningsByGroup(groupId: $groupId) {
-    id
-    date
-    morning_activities
-    morning_nap
-    meal
-    afternoon_activities
-    afternoon_nap
-    snack
-  }
-}
-    `;
-
-/**
- * __useGetAllPlanningsByGroupQuery__
- *
- * To run a query within a React component, call `useGetAllPlanningsByGroupQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllPlanningsByGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
 export const AllChildrenDocument = gql`
     query AllChildren {
   children {
@@ -572,28 +553,6 @@ export const AllChildrenDocument = gql`
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetAllPlanningsByGroupQuery({
- *   variables: {
- *      groupId: // value for 'groupId'
- *   },
- * });
- */
-export function useGetAllPlanningsByGroupQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables> & ({ variables: GetAllPlanningsByGroupQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
-        const options = {...defaultOptions, ...baseOptions}
-        return ApolloReactHooks.useQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
-      }
-export function useGetAllPlanningsByGroupLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useLazyQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
-        }
-export function useGetAllPlanningsByGroupSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>) {
-          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
-          return ApolloReactHooks.useSuspenseQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
-        }
-export type GetAllPlanningsByGroupQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupQuery>;
-export type GetAllPlanningsByGroupLazyQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupLazyQuery>;
-export type GetAllPlanningsByGroupSuspenseQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupSuspenseQuery>;
-export type GetAllPlanningsByGroupQueryResult = ApolloReactCommon.QueryResult<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>;
  * const { data, loading, error } = useAllChildrenQuery({
  *   variables: {
  *   },
@@ -772,6 +731,53 @@ export function useLinkParentToChildMutation(baseOptions?: ApolloReactHooks.Muta
 export type LinkParentToChildMutationHookResult = ReturnType<typeof useLinkParentToChildMutation>;
 export type LinkParentToChildMutationResult = ApolloReactCommon.MutationResult<LinkParentToChildMutation>;
 export type LinkParentToChildMutationOptions = ApolloReactCommon.BaseMutationOptions<LinkParentToChildMutation, LinkParentToChildMutationVariables>;
+export const GetAllPlanningsByGroupDocument = gql`
+    query getAllPlanningsByGroup($groupId: Int!) {
+  getAllPlanningsByGroup(groupId: $groupId) {
+    id
+    date
+    morning_activities
+    morning_nap
+    meal
+    afternoon_activities
+    afternoon_nap
+    snack
+  }
+}
+    `;
+
+/**
+ * __useGetAllPlanningsByGroupQuery__
+ *
+ * To run a query within a React component, call `useGetAllPlanningsByGroupQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllPlanningsByGroupQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllPlanningsByGroupQuery({
+ *   variables: {
+ *      groupId: // value for 'groupId'
+ *   },
+ * });
+ */
+export function useGetAllPlanningsByGroupQuery(baseOptions: ApolloReactHooks.QueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables> & ({ variables: GetAllPlanningsByGroupQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return ApolloReactHooks.useQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
+      }
+export function useGetAllPlanningsByGroupLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useLazyQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
+        }
+export function useGetAllPlanningsByGroupSuspenseQuery(baseOptions?: ApolloReactHooks.SkipToken | ApolloReactHooks.SuspenseQueryHookOptions<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>) {
+          const options = baseOptions === ApolloReactHooks.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return ApolloReactHooks.useSuspenseQuery<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>(GetAllPlanningsByGroupDocument, options);
+        }
+export type GetAllPlanningsByGroupQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupQuery>;
+export type GetAllPlanningsByGroupLazyQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupLazyQuery>;
+export type GetAllPlanningsByGroupSuspenseQueryHookResult = ReturnType<typeof useGetAllPlanningsByGroupSuspenseQuery>;
+export type GetAllPlanningsByGroupQueryResult = ApolloReactCommon.QueryResult<GetAllPlanningsByGroupQuery, GetAllPlanningsByGroupQueryVariables>;
 export const ChangePasswordDocument = gql`
     mutation ChangePassword($data: ChangePasswordInput!) {
   changePassword(data: $data)
