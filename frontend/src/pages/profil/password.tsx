@@ -83,7 +83,7 @@ const ChangePasswordPage = () => {
                       className="bb-eye-btn"
                       onClick={() => setShowOld(!showOld)}
                     >
-                      <img src={showOld ? "/eye-off.png" : "/eye.png"} alt="Toggle" />
+                      <img src={showOld ? "/closeeye.png" : "/openeye.png"} alt="Toggle" />
                     </button>
                   </div>
                 </div>
@@ -103,7 +103,7 @@ const ChangePasswordPage = () => {
                       className="bb-eye-btn"
                       onClick={() => setShowNew(!showNew)}
                     >
-                      <img src={showNew ? "/eye-off.png" : "/eye.png"} alt="Toggle" />
+                      <img src={showNew ? "/closeeye.png" : "/openeye.png"} alt="Toggle" />
                     </button>
                   </div>
                 </div>
