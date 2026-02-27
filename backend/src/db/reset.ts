@@ -193,7 +193,7 @@ async function main() {
     afternoon_nap: "14h30 - 15h15",
     morning_activities: "Diamond painting",
     afternoon_activities: "Comptines + parcours sportif",
-    date: "03/10/2026",
+    date: "02/11/2026",
     group: { id: group1.id }
   }).save();
 
@@ -227,7 +227,7 @@ async function main() {
 
   await Report.create({
     isPresent: true,
-    date: "03/10/2026",
+    date: "02/11/2026",
     staff_comment: "un petit caprice pour faire la sieste mais bonne journée en globale",
     baby_mood: baby_moodFormat.Neutral,
     picture: "https://picsum.photos/200?random=10",
