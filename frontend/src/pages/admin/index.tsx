@@ -37,6 +37,7 @@ export default function AdminDashboard() {
 
         <div className="mt-3 grid grid-cols-3 gap-4">
           <button
+            type="button"
             className="
     flex items-center gap-2
     border-2 border-(--color-primary)
@@ -68,6 +69,7 @@ export default function AdminDashboard() {
           </button>
 
           <button
+            type="button"
             className="
     flex items-center gap-2
     border-2 border-(--color-primary)
@@ -97,6 +99,7 @@ export default function AdminDashboard() {
           </button>
 
           <button
+            type="button"
             className="
     flex items-center gap-2
     border-2 border-(--color-primary)
@@ -135,6 +138,7 @@ export default function AdminDashboard() {
           <div className="mt-4 grid grid-cols-2 gap-4">
             {/* Enfant */}
             <button
+              type="button"
               onClick={() => setOpenChildModal(true)}
               className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
             >
@@ -170,6 +174,7 @@ export default function AdminDashboard() {
 
             {/* Staff */}
             <button
+              type="button"
               onClick={() => setOpenStaffModal(true)}
               className="relative w-full h-[85px] rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-4 py-3 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
             >
@@ -207,6 +212,7 @@ export default function AdminDashboard() {
             <div className="col-span-2 flex justify-center">
               <div className="w-[50%]">
                 <button
+                  type="button"
                   onClick={() => setOpenParentModal(true)}
                   className="relative w-full h-[85px] rounded-2xl bg-white/70 border-2 border-(--color-secondary) px-4 py-3 shadow-sm     transition-all duration-200
                     hover:shadow-md
@@ -252,7 +258,10 @@ export default function AdminDashboard() {
         {/* Suivi */}
         <div className="mt-7">
           <p className="text-[12px] font-semibold">Suivi</p>
-          <button className="mt-4 w-full rounded-2xl bg-white/80 py-3 text-[13px]  shadow-sm border-2 border-(--color-primary)">
+          <button
+            type="button"
+            className="mt-4 w-full rounded-2xl bg-white/80 py-3 text-[13px]  shadow-sm border-2 border-(--color-primary)"
+          >
             Voir tous les rapport
           </button>
         </div>

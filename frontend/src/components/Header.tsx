@@ -64,7 +64,7 @@ export default function Header({ user, refetch }: HeaderProps)  {
 
         <div className="flex gap-2 items-center">
           {user && (
-            <>
+            <div>
               <div className="flex items-center gap-2 mr-2">
                 <div className="w-16 h-16 rounded-full flex items-center justify-center text-sm font-bold overflow-hidden md:w-24 md:h-24">
                   {user.avatar ? (
@@ -80,11 +80,10 @@ export default function Header({ user, refetch }: HeaderProps)  {
                   )}
                 </div>
               </div>
-            </>
+            </div>
           )}
         </div>
       </nav>
     </header>
   );
 }
-
