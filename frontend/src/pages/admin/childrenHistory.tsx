@@ -1,12 +1,9 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
-import Layout from "@/components/Layout";
-import { useAuth } from "@/hooks/CurrentProfile";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AddChildModal from "@/components/admin/AddChildModal";
-import {
-  useAdminChildrenQuery,
-  useDeleteChildMutation,
-} from "@/graphql/generated/schema";
+import Layout from "@/components/Layout";
+import { useAdminChildrenQuery, useDeleteChildMutation } from "@/graphql/generated/schema";
+import { useAuth } from "@/hooks/CurrentProfile";
 
 // Retourne la couleur de fond CSS d'un groupe à partir de son id.
 // Les couleurs sont définies dans globals.css :
@@ -111,8 +108,7 @@ export default function AdminChildrenPage() {
     return children.filter((c) => {
       const fullName = `${c.firstName} ${c.lastName}`.toLowerCase();
       const matchSearch = !q || fullName.includes(q);
-      const matchGroup =
-        groupFilter === "ALL" || String(c.group?.id) === groupFilter;
+      const matchGroup = groupFilter === "ALL" || String(c.group?.id) === groupFilter;
       return matchSearch && matchGroup;
     });
   }, [children, search, groupFilter]);
@@ -148,7 +144,10 @@ export default function AdminChildrenPage() {
       {/* Modal d'ajout d'un enfant — se ferme et rafraîchit la liste */}
       <AddChildModal
         open={showAddModal}
-        onClose={() => { setShowAddModal(false); refetch(); }}
+        onClose={() => {
+          setShowAddModal(false);
+          refetch();
+        }}
       />
 
       {/* Modal de confirmation avant suppression définitive */}
@@ -163,8 +162,19 @@ export default function AdminChildrenPage() {
           <div className="relative w-full max-w-[340px] rounded-3xl bg-[#FEF9F6] border-2 border-(--color-primary) p-6 shadow-xl flex flex-col items-center gap-4">
             {/* Icône poubelle */}
             <div className="flex h-14 w-14 items-center justify-center rounded-full bg-red-50 border-2 border-red-200">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7 text-red-400"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                />
               </svg>
             </div>
             <div className="text-center">
@@ -191,7 +201,6 @@ export default function AdminChildrenPage() {
       )}
 
       <div className="mx-auto w-full max-w-[420px] px-4 pt-2 pb-6">
-
         {/* En-tête : bouton retour / titre / bouton ajouter */}
         <div className="flex items-center justify-between">
           <button onClick={() => router.push("/admin")} className="p-0">
@@ -236,9 +245,13 @@ export default function AdminChildrenPage() {
             <span className="text-gray-500">
               {groupFilter === "ALL"
                 ? "Tous les groupes"
-                : groups.find((g) => g.id === groupFilter)?.name ?? "Tous les groupes"}
+                : (groups.find((g) => g.id === groupFilter)?.name ?? "Tous les groupes")}
             </span>
-            <span className={`ml-1 text-gray-400 transition-transform duration-200 ${groupDropdownOpen ? "rotate-180" : ""}`}>▾</span>
+            <span
+              className={`ml-1 text-gray-400 transition-transform duration-200 ${groupDropdownOpen ? "rotate-180" : ""}`}
+            >
+              ▾
+            </span>
           </button>
 
           {/* Options du dropdown */}
@@ -248,7 +261,10 @@ export default function AdminChildrenPage() {
                 <button
                   key={g.id}
                   type="button"
-                  onClick={() => { setGroupFilter(g.id); setGroupDropdownOpen(false); }}
+                  onClick={() => {
+                    setGroupFilter(g.id);
+                    setGroupDropdownOpen(false);
+                  }}
                   className={`w-full text-left px-3 py-2 text-[12px] border-b border-gray-50 last:border-0 hover:bg-orange-50 ${groupFilter === g.id ? "font-semibold" : ""}`}
                 >
                   {g.name}
@@ -259,15 +275,9 @@ export default function AdminChildrenPage() {
         </div>
 
         {/* États de chargement / erreur */}
-        {loading && (
-          <p className="mt-6 text-center text-[13px] opacity-70">
-            Chargement...
-          </p>
-        )}
+        {loading && <p className="mt-6 text-center text-[13px] opacity-70">Chargement...</p>}
         {error && (
-          <p className="mt-6 text-center text-[13px] text-red-600">
-            Erreur lors du chargement.
-          </p>
+          <p className="mt-6 text-center text-[13px] text-red-600">Erreur lors du chargement.</p>
         )}
 
         {/* Liste des enfants filtrés */}
@@ -318,9 +328,7 @@ export default function AdminChildrenPage() {
                 {/* Menu "···" — actions Modifier / Supprimer */}
                 <div ref={openMenuId === c.id ? menuRef : null}>
                   <button
-                    onClick={() =>
-                      setOpenMenuId(openMenuId === c.id ? null : c.id)
-                    }
+                    onClick={() => setOpenMenuId(openMenuId === c.id ? null : c.id)}
                     className="text-[20px] px-2 opacity-60 hover:opacity-100"
                   >
                     •••
@@ -336,17 +344,41 @@ export default function AdminChildrenPage() {
                         }}
                         className="flex items-center gap-3 px-4 py-2.5 text-left hover:bg-gray-50 border-b border-gray-100"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z" /></svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487z"
+                          />
+                        </svg>
                         Modifier
                       </button>
                       {/* Supprimer ouvre la modal de confirmation */}
                       <button
-                        onClick={() =>
-                          handleDelete(c.id, `${c.firstName} ${c.lastName}`)
-                        }
+                        onClick={() => handleDelete(c.id, `${c.firstName} ${c.lastName}`)}
                         className="flex items-center gap-3 px-4 py-2.5 text-left text-red-500 hover:bg-red-50"
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4 shrink-0"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                          strokeWidth={1.5}
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                          />
+                        </svg>
                         Supprimer
                       </button>
                     </div>
