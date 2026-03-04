@@ -47,6 +47,7 @@ const PencilIcon = () => (
     stroke="currentColor"
     strokeWidth={1.5}
   >
+    <title>Modifier</title>
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -80,7 +81,7 @@ export default function EditChildPage() {
   // skip : n'exécute pas la requête si l'id n'est pas encore disponible
   const { data, loading } = useAdminChildDetailQuery({
     variables: { id: childId },
-    skip: !childId || isNaN(childId),
+    skip: !childId || Number.isNaN(childId),
     fetchPolicy: "network-only", // toujours récupérer les données fraîches
   });
 
@@ -204,7 +205,6 @@ export default function EditChildPage() {
                   <input
                     {...register("firstName", { required: true })}
                     className="w-24 rounded-lg border-2 border-(--color-primary) px-2 py-0.5 text-[14px] outline-none text-center"
-                    autoFocus
                   />
                   <input
                     {...register("lastName", { required: true })}
@@ -238,7 +238,6 @@ export default function EditChildPage() {
                     type="date"
                     {...register("birthDate")}
                     className="rounded-lg border-2 border-(--color-primary) px-2 py-0.5 text-[12px] outline-none"
-                    autoFocus
                   />
                   <button
                     type="button"
@@ -300,6 +299,7 @@ export default function EditChildPage() {
                           stroke="currentColor"
                           strokeWidth={1.5}
                         >
+                          <title>Message</title>
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -365,7 +365,6 @@ export default function EditChildPage() {
                           {...register("birthDate")}
                           className="flex-1 rounded-lg border-2 px-2 py-0.5 text-[12px] outline-none"
                           style={{ borderColor: "var(--color-primary)" }}
-                          autoFocus
                         />
                       ) : (
                         <span className="text-[13px]">
@@ -447,7 +446,6 @@ export default function EditChildPage() {
                           className="flex-1 rounded-lg border-2 px-2 py-0.5 text-[12px] outline-none"
                           style={{ borderColor: "var(--color-primary)" }}
                           placeholder="Ex: allergie arachides..."
-                          autoFocus
                         />
                       ) : (
                         <span className="text-[13px]">

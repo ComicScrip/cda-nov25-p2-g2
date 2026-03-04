@@ -155,6 +155,7 @@ export default function AdminChildrenPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
           {/* Fond sombre cliquable pour fermer */}
           <button
+            type="button"
             className="absolute inset-0 bg-black/20 backdrop-blur-[2px]"
             onClick={() => setConfirmDelete(null)}
             aria-label="Fermer"
@@ -170,6 +171,7 @@ export default function AdminChildrenPage() {
                 stroke="currentColor"
                 strokeWidth={1.5}
               >
+                <title>Supprimer</title>
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -184,12 +186,14 @@ export default function AdminChildrenPage() {
             </div>
             <div className="flex w-full gap-3">
               <button
+                type="button"
                 onClick={() => setConfirmDelete(null)}
                 className="flex-1 rounded-xl border-2 border-(--color-tertiary) bg-white py-2 text-[13px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
               >
                 Annuler
               </button>
               <button
+                type="button"
                 onClick={confirmDeleteChild}
                 className="flex-1 rounded-xl border-2 border-red-200 bg-white py-2 text-[13px] text-red-500 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
               >
@@ -203,7 +207,7 @@ export default function AdminChildrenPage() {
       <div className="mx-auto w-full max-w-[420px] px-4 pt-2 pb-6">
         {/* En-tête : bouton retour / titre / bouton ajouter */}
         <div className="flex items-center justify-between">
-          <button onClick={() => router.push("/admin")} className="p-0">
+          <button type="button" onClick={() => router.push("/admin")} className="p-0">
             <div className="h-10 w-10 overflow-hidden flex items-center justify-center">
               <img src="/admin/flechegauche.png" alt="Retour" className="h-16 w-16" />
             </div>
@@ -212,6 +216,7 @@ export default function AdminChildrenPage() {
           <h1 className="text-[16px] font-semibold">Enfants</h1>
 
           <button
+            type="button"
             onClick={() => setShowAddModal(true)}
             className="rounded-2xl bg-white/80 border-2 border-(--color-secondary) px-2 py-1 text-[12px] shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.03] active:scale-95"
           >
@@ -328,6 +333,7 @@ export default function AdminChildrenPage() {
                 {/* Menu "···" — actions Modifier / Supprimer */}
                 <div ref={openMenuId === c.id ? menuRef : null}>
                   <button
+                    type="button"
                     onClick={() => setOpenMenuId(openMenuId === c.id ? null : c.id)}
                     className="text-[20px] px-2 opacity-60 hover:opacity-100"
                   >
@@ -338,6 +344,7 @@ export default function AdminChildrenPage() {
                     <div className="absolute right-3 top-12 z-10 flex flex-col rounded-2xl bg-white border-2 border-(--color-tertiary) shadow-md overflow-hidden text-[13px] min-w-[140px]">
                       {/* Modifier redirige vers /admin/children/[id]/edit */}
                       <button
+                        type="button"
                         onClick={() => {
                           setOpenMenuId(null);
                           router.push(`/admin/children/${c.id}/edit`);
@@ -352,6 +359,7 @@ export default function AdminChildrenPage() {
                           stroke="currentColor"
                           strokeWidth={1.5}
                         >
+                          <title>Modifier</title>
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -362,6 +370,7 @@ export default function AdminChildrenPage() {
                       </button>
                       {/* Supprimer ouvre la modal de confirmation */}
                       <button
+                        type="button"
                         onClick={() => handleDelete(c.id, `${c.firstName} ${c.lastName}`)}
                         className="flex items-center gap-3 px-4 py-2.5 text-left text-red-500 hover:bg-red-50"
                       >
@@ -373,6 +382,7 @@ export default function AdminChildrenPage() {
                           stroke="currentColor"
                           strokeWidth={1.5}
                         >
+                          <title>Supprimer</title>
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
