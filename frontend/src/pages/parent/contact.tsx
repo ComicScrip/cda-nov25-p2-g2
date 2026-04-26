@@ -59,7 +59,7 @@ const ContactDirectricePage = () => {
 
       if (response.ok) {
         alert("Succès ! Votre message et vos fichiers ont été envoyés.");
-        router.push("/parent/index");
+        router.push("/parent");
       } else {
         const errorData = await response.json();
         throw new Error(errorData.details || "Erreur lors de l'envoi");
@@ -166,7 +166,10 @@ const ContactDirectricePage = () => {
                       >
                         {files.map((f, i) => (
                           <div
-                            key={`${f.name}-${i}`}
+                            key={`${f.name}-${
+                              // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                              i
+                            }`}
                             style={{
                               fontSize: "12px",
                               display: "flex",

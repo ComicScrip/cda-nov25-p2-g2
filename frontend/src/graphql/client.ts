@@ -1,6 +1,6 @@
 import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
 
-const uri = process.env.NEXT_PUBLIC_GRAPHQL_API_URL || "/graphql";
+const uri = "http://localhost:4000/";
 
 if (!uri) throw new Error("missing API URL, check your .env !");
 

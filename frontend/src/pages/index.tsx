@@ -1,12 +1,12 @@
+import Layout from "@/components/Layout";
+import { type LoginInput, useLoginMutation } from "@/graphql/generated/schema";
+import { useAuth } from "@/hooks/CurrentProfile";
+import { CombinedGraphQLErrors } from "@apollo/client";
+import { GraphQLError } from "graphql/error";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import Layout from "@/components/Layout";
-import { type LoginInput, useLoginMutation } from "@/graphql/generated/schema";
-import { useAuth } from "@/hooks/CurrentProfile";
-import { GraphQLError } from "graphql/error";
-import { CombinedGraphQLErrors } from "@apollo/client";
 
 export default function Home() {
   const router = useRouter();
@@ -40,7 +40,7 @@ export default function Home() {
       await refetch();
     } catch (err: unknown) {
       setErrorSubmit(true);
-   }
+    }
   };
 
   const handleClickEye = () => {
@@ -53,10 +53,18 @@ export default function Home() {
 
       {errorSubmit && error && (
         <p className="text-red-500 px-5 mx-5 alert bg-red-100 border border-red-500 absolute top-3 left-0 right-0 md:top-5 md:text-xl md:mx-52">
-          { error instanceof TypeError && error.message.includes("Network") && <>Erreur de connexion rencontrée.<br /> Merci de réessayer utlérieurement</> }
-          { error instanceof CombinedGraphQLErrors && error.errors[0].extensions?.code === "UNAUTHENTICATED" && "Identifiants incorrects" }
-                    
+          {error instanceof TypeError && error.message.includes("Network") && (
+            <>
+              Erreur de connexion rencontrée.
+              <br /> Merci de réessayer utlérieurement
+            </>
+          )}
+          {error instanceof CombinedGraphQLErrors &&
+            error.errors[0].extensions?.code === "UNAUTHENTICATED" &&
+            "Identifiants incorrects"}
+
           <span className="absolute top-0 bottom-0 right-0 px-4 py-3">
+            {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <svg
               className="h-6 w-6 cursor-pointer fill-current text-red-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -118,6 +126,7 @@ export default function Home() {
               className="w-[75%] rounded-4xl bg-[#d4efff] px-2 py-3 text-center text-xl md:rounded-[50] md:py-6 md:text-4xl"
             />
 
+            {/** biome-ignore lint/a11y/useKeyWithClickEvents: <explanation> */}
             <img
               src={visiblePassword ? "/closeeye.png" : "/openeye.png"}
               alt="Afficher mot de passe"
